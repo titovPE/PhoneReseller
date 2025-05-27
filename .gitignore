@@ -1,3 +1,5 @@
+Phones*
+
 # Prerequisites
 *.d
 
@@ -48,7 +50,7 @@ x64/
 *.lo
 
 # Shared objects (inc. Windows DLLs)
-*.dll
+#*.dll
 *.so
 *.so.*
 *.dylib
