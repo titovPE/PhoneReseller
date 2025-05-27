@@ -1,0 +1,323 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4DBE9838-C5E9-492A-9F83-22109D25A5CC}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PhoneReseller</RootNamespace>
+    <AssemblyName>PhoneReseller</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>12.6.3.0</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>2.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>3E99EDB211ED64A87AD14FEED8E3A98572916398</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>PhoneReseller_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Management" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AAA.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AAA.Designer.cs">
+      <DependentUpon>AAA.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Cache.cs" />
+    <None Include="changelog.md" />
+    <Compile Include="ColumnsDictionary.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="Generators\SoldGenerator.cs" />
+    <Compile Include="Generators\WorkersGenerator.cs" />
+    <Compile Include="KeySelector.cs" />
+    <Compile Include="SQLiteDataConverter.cs" />
+    <Compile Include="DataProvider.cs" />
+    <Compile Include="DataRowExstesion.cs" />
+    <Compile Include="DataSet1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="LoadOldData.cs" />
+    <Compile Include="MergeDB.cs" />
+    <Compile Include="OwnerExtention.cs" />
+    <Compile Include="TableNames.cs" />
+    <Compile Include="UserForms\DayReport.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\DayReport.Designer.cs">
+      <DependentUpon>DayReport.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserForms\DialogService.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormValidator.cs" />
+    <Compile Include="GridController.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserForms\BuyPhone.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\BuyPhone.Designer.cs">
+      <DependentUpon>BuyPhone.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserForms\ChangePass.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\ChangePass.Designer.cs">
+      <DependentUpon>ChangePass.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserForms\DocRedact.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\DocRedact.Designer.cs">
+      <DependentUpon>DocRedact.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserForms\DialogProvider.cs" />
+    <Compile Include="UserForms\IReshower.cs" />
+    <Compile Include="UserForms\NotBuy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\NotBuy.Designer.cs">
+      <DependentUpon>NotBuy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserForms\PasswordInput.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\PasswordInput.Designer.cs">
+      <DependentUpon>PasswordInput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserForms\PriceUp.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\PriceUp.Designer.cs">
+      <DependentUpon>PriceUp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserForms\RegularClient.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\RegularClient.Designer.cs">
+      <DependentUpon>RegularClient.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserForms\ReturnPhone.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\ReturnPhone.Designer.cs">
+      <DependentUpon>ReturnPhone.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserForms\SellPhone.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\SellPhone.Designer.cs">
+      <DependentUpon>SellPhone.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserForms\ToSell.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\ToSell.Designer.cs">
+      <DependentUpon>ToSell.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="AAA.resx">
+      <DependentUpon>AAA.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PhoneReports.rdlc" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="UserForms\BuyPhone.resx">
+      <DependentUpon>BuyPhone.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForms\ChangePass.resx">
+      <DependentUpon>ChangePass.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForms\DayReport.resx">
+      <DependentUpon>DayReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForms\DocRedact.resx">
+      <DependentUpon>DocRedact.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForms\NotBuy.resx">
+      <DependentUpon>NotBuy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForms\PasswordInput.resx">
+      <DependentUpon>PasswordInput.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForms\PriceUp.resx">
+      <DependentUpon>PriceUp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForms\RegularClient.resx">
+      <DependentUpon>RegularClient.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForms\ReturnPhone.resx">
+      <DependentUpon>ReturnPhone.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForms\SellPhone.resx">
+      <DependentUpon>SellPhone.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForms\ToSell.resx">
+      <DependentUpon>ToSell.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="DataSet1.xsc">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="DataSet1.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>DataSet1.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="DataSet1.xss">
+      <DependentUpon>DataSet1.xsd</DependentUpon>
+    </None>
+    <None Include="PhoneReseller_TemporaryKey.pfx" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="2.ico" />
+    <Content Include="Config.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PhoneReports\PhoneReports.csproj">
+      <Project>{87F23222-25F0-4533-A51E-32959BEF1427}</Project>
+      <Name>PhoneReports</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PhoneReseller.domain\PhoneReseller.Domain.csproj">
+      <Project>{4287B599-E40C-4048-A2EC-236D9FA36536}</Project>
+      <Name>PhoneReseller.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PSKeyGenerator\PSKeyGenerator.csproj">
+      <Project>{278CA803-3748-4089-9113-9D46447C9400}</Project>
+      <Name>PSKeyGenerator</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\DataSources\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
