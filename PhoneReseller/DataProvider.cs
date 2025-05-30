@@ -45,20 +45,55 @@ namespace PhoneReseller
 
         }
 
-        public static bool CheckReqularClientsAvailability()
+        public static bool CheckTableAvailability(string tableName)
         {
-            var cliensTable = TableNames.Clients;
-            //var cliensTable = "Sold";
-
             var sqlitMaster = "sqlite_master";
             var cmd = "SELECT name FROM " + sqlitMaster + " WHERE type='table'";
             _myDataAdapter.SelectCommand = new SQLiteCommand(cmd, _myConnection);
             _myDataAdapter.Fill(_myDataSet, sqlitMaster);
-
             return _myDataSet.Tables[sqlitMaster]
                 .Rows.Cast<DataRow>().Select(it => it["name"])
-                .Any(it => it.ToString() == cliensTable);
+                .Any(it => it.ToString() == tableName);
         }
+
+        #region Ations log
+        //фича для работы с логом действий пользователя
+
+        public static void EnableActionsLog()
+        {
+            var actionsTable = TableNames.Actions;
+            if (CheckTableAvailability(actionsTable))
+            {
+                MessageBox.Show("Лог действий уже включен ранее. Сейчас ничего сделано не будет");
+                return;
+            }
+            var command = $@"CREATE TABLE [{actionsTable}] (
+                              [PhoneId] numeric(18,0) NOT NULL
+                            , [Date] DATETIME NOT NULL
+                            , [Action] NVARCHAR(50) NOT NULL COLLATE NOCASE
+                            , [Worker] NVARCHAR(50) NOT NULL COLLATE NOCASE
+                            );
+                            CREATE INDEX [Actions_phone_index] ON [{actionsTable}] ([PhoneId] ASC);";
+            new SQLiteCommand(command, _myConnection).ExecuteNonQuery();
+            MessageBox.Show("Лог действий успешно в ключен и будет автоматически записываться.");
+        }
+
+        public static void AddActionLog(string phoneId, string action, string worker)
+        {
+            var actionsTable = TableNames.Actions;
+            if (!CheckTableAvailability(actionsTable))
+            {
+                return;
+            }
+            var command = $"INSERT INTO {actionsTable} (PhoneId, Date, Action, Worker) " +
+                      $"VALUES ({phoneId}, '{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}', '{action}', '{worker}')";
+            new SQLiteCommand(command, _myConnection).ExecuteNonQuery();
+        }
+
+        #endregion
+
+        #region regular clients
+        // фича отменена, но код остался для возможного использования в будущем
 
         /// <summary>
         /// Архивный метод делался для задачи управления постоянными клиентам, её отменили
@@ -67,7 +102,7 @@ namespace PhoneReseller
         {
             var cliensTable = TableNames.Clients;
 
-            if (CheckReqularClientsAvailability())
+            if (CheckTableAvailability(cliensTable))
             {
                 MessageBox.Show("Управление клинтами уже включили раньше. Сейчас ничего сделано не будет");
                 return;
@@ -85,6 +120,8 @@ namespace PhoneReseller
             new SQLiteCommand(command, _myConnection).ExecuteNonQuery();
             MessageBox.Show("Управление клиентами успешно в ключено и доступно на форме пукупки телефона");
         }
+
+        #endregion
 
         #region ClientsAutocomplete
 
@@ -289,7 +326,7 @@ namespace PhoneReseller
         /// создает новую запись в таблице, при этом айди равен муксимальному +1
         /// </summary>
         /// <param name="valuesSet"></param>
-        public static void CreateRow(ColumnsDictionary valuesSet)
+        public static int CreateRow(ColumnsDictionary valuesSet, bool enableID = true)
         {
 
             var valuesRow = valuesSet.TableName == TableNames.Clients
@@ -300,8 +337,14 @@ namespace PhoneReseller
             //там нет ни идентификатора ни номера идентификатор
             //наверно нужен для индекса и получения чодржиможгго выбранной записи а вот номер точно не нужен.
             //Видать надо сделатьновый метод.
-            var columns = "( ID , Num";
-            var values = "(" + (GetMaxID() + 1) + " ," + (GetMaxNum() + 1);
+            var id = GetMaxID() + 1;
+            var columns = "(";
+            var values = "(";
+            if (enableID) {
+                columns = columns + " ID , Num";
+                values = values + id + " ," + (GetMaxNum() + 1);
+            }
+
             UpdateGlobalVariables((GetMaxID() + 1), (GetMaxNum() + 1));
             foreach (var item in valuesRow)
             {
@@ -317,6 +360,7 @@ namespace PhoneReseller
             var myCommand = new SQLiteCommand(command, _myConnection);
             myCommand.ExecuteNonQuery();
             FillDataSet(valuesRow.TableName, null);
+            return id;
         }
 
         public static void AddWorker(ColumnsDictionary worker)

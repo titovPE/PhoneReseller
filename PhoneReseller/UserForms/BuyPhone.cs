@@ -35,7 +35,7 @@ namespace PhoneReseller.UserForms
 
         public ColumnsDictionary ShowMe(ColumnsDictionary row)
         {
-            fillByRegularClientButton.Visible = DataProvider.CheckReqularClientsAvailability();
+            fillByRegularClientButton.Visible = DataProvider.CheckTableAvailability(TableNames.Clients);
             _result = null;
             _row = null;
             DialogService.FillWorkers(Acceptor);

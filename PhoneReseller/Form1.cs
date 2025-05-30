@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Data;
-using System.Linq;
 using System.Drawing;
-using System.Linq;
-using System.Collections.Generic;
 using System.IO;
 using System.Management;
 using System.Security.Cryptography;
@@ -11,9 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using PhoneReseller.UserForms;
-using System.Collections;
 using System.Globalization;
-using System.Reflection;
 
 namespace PhoneReseller
 {
@@ -36,7 +31,7 @@ namespace PhoneReseller
         {
             if (!VerifyMotherBoard()) Close();
             InitializeComponent();
-            Text = Text + " v 12.8.3";
+            Text = Text + " v 12.9.0";
             DataProvider.Inicialize(config.DbPath);
             DialogProvider.Inicialize();
             IsAutocompleteEnabled = DataProvider.CheckAutocompleteEnabled();
@@ -633,9 +628,11 @@ namespace PhoneReseller
             SNotes.Visible = false;
         }
 
-        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        private void button17_Click_2(object sender, EventArgs e)
         {
+            DataProvider.EnableActionsLog();
 
         }
     }
+
 }

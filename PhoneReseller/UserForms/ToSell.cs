@@ -175,7 +175,8 @@ namespace PhoneReseller.UserForms
           }
           //if (!FormValidator.Validated) { MessageBox.Show("не заполненны следующие поля: " + FormValidator.FailedFields); return; }
           DataProvider.MooveRow(phone, "Sold");
-          Close();
+            DataProvider.AddActionLog(phone["ID"], $"Телефон помечен как не подлежащий к продаже", phone["Worker"]);
+            Close();
         }
 
         //public string _stc(string sorceString)

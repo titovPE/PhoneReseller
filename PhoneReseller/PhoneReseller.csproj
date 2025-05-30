@@ -69,8 +69,6 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.ReportViewer.Common, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <Reference Include="Microsoft.ReportViewer.WinForms, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -296,10 +294,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PhoneReports\PhoneReports.csproj">
-      <Project>{87F23222-25F0-4533-A51E-32959BEF1427}</Project>
-      <Name>PhoneReports</Name>
-    </ProjectReference>
     <ProjectReference Include="..\PhoneReseller.domain\PhoneReseller.Domain.csproj">
       <Project>{4287B599-E40C-4048-A2EC-236D9FA36536}</Project>
       <Name>PhoneReseller.Domain</Name>

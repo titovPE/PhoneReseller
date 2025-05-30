@@ -9,21 +9,34 @@ namespace PhoneReseller.UserForms
 {
   class DialogService
   {
-    public static void CreatePhone(string dialogName, ColumnsDictionary entity, bool printDoc)
-    {
-      var phone = DialogProvider.GetForm(dialogName).ShowMe(entity);
-      if (phone == null) return;
-      Cache.PutSingle(new PhoneOwner().Extract(phone));
-      DataProvider.CreateRow(phone);
-      if (printDoc)
-        new DocPrinter(phone);
-    }
+        public static void CreatePhone(string dialogName, ColumnsDictionary entity, bool printDoc)
+        {
+            var phone = DialogProvider.GetForm(dialogName).ShowMe(entity);
+            if (phone == null) return;
+            Cache.PutSingle(new PhoneOwner().Extract(phone));
+            var id = DataProvider.CreateRow(phone);
+            DataProvider.AddActionLog($"{id}", "Создана запись о покупке", phone["Acceptor"]);
+            if (printDoc)
+                new DocPrinter(phone);
+        }
 
         public static void Transaction(string dialogName, ColumnsDictionary entity)
         {
+            string getActionName(string tabelName){
+            
+                switch(tabelName)
+                {
+                    case "ToSell":
+                        return "на продажу";
+                    case "Sold":
+                        return "в проданные";
+                }
+                return "";
+            };
 
             var phone = DialogProvider.GetForm(dialogName).ShowMe(entity);
             if (phone == null) return;
+            //Особенная логика для телефонов, которые были откачены
             if (entity.ContainsKey("Rollbacked") && (bool.Parse(entity["Rollbacked"])))
             {
                 entity["Rollbacked"] = false.ToString();
@@ -31,9 +44,12 @@ namespace PhoneReseller.UserForms
                 var prevTable = phone.TableName;
                 phone.TableName = prevTable == "Rec" ? "ToSell" : "Sold";
                 DataProvider.UpdateRow(phone);
+                var actionName = getActionName(phone.TableName);
+                DataProvider.AddActionLog(phone["ID"], $"Откаченый телефон переведен {actionName}", phone["Worker"]);
                 DataProvider.GetTable(prevTable);
             }
             else DataProvider.MooveRow(phone, dialogName);
+            DataProvider.AddActionLog(phone["ID"], $"Телефон переведен {getActionName(dialogName)}", phone["Worker"]);
             phone.TableName = dialogName;
             new DocPrinter(phone);
         }
@@ -47,6 +63,7 @@ namespace PhoneReseller.UserForms
                 phone["Rollbacked"] = entity["Rollbacked"];
             phone.RoollBacked = entity.RoollBacked;
             DataProvider.UpdateRow(phone);
+            DataProvider.AddActionLog(phone["ID"], "Редактирование телефона", phone["Worker"]);
             DataProvider.GetTable(tname);
         }
 
