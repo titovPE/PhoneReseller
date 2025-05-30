@@ -280,7 +280,7 @@ namespace PhoneReseller
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void dataGridView2_SelectionChanged(object sender, EventArgs e)
+        private void dataGridView2_SelectionChanged(object sender, EventArgs e) 
         {
             SoldState.ForeColor = Color.Red;
             var row = GetSelectedRow(dataGridView2);
@@ -321,6 +321,24 @@ namespace PhoneReseller
             SCost2.Text = row["Cost"].ToString();
             SPrice2.Text = row["SalePrice"].ToString();
             StartPrice.Text = row["Price"].ToString();
+        }
+
+        /// <summary>
+        /// Правый клик мышки отображает лог событий телефона
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void dataGridView_MouseClick(object sender, MouseEventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+            if (me.Button == MouseButtons.Right)
+            {
+                var row = GetSelectedRow((DataGridView)sender);
+                if (row == null) return;
+                var phoneID = SQLiteDataConverter.RowToDictionary(row)["ID"];
+                var result = DataProvider.ReadLogByPhineId(phoneID);
+                MessageBox.Show(result);
+            }
         }
 
         /// <summary>

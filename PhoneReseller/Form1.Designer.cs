@@ -871,6 +871,7 @@
             this.dataGridView0.Size = new System.Drawing.Size(813, 369);
             this.dataGridView0.TabIndex = 0;
             this.dataGridView0.SelectionChanged += new System.EventHandler(this.RecDataGridView_SelectionChanged);
+            this.dataGridView0.MouseClick += new System.Windows.Forms.MouseEventHandler(this.dataGridView_MouseClick);
             // 
             // tabPage2
             // 
@@ -1610,6 +1611,7 @@
             this.dataGridView1.Size = new System.Drawing.Size(813, 369);
             this.dataGridView1.TabIndex = 0;
             this.dataGridView1.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
+            this.dataGridView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.dataGridView_MouseClick);
             // 
             // tabPage3
             // 
@@ -2605,6 +2607,7 @@
             this.dataGridView2.Size = new System.Drawing.Size(813, 369);
             this.dataGridView2.TabIndex = 0;
             this.dataGridView2.SelectionChanged += new System.EventHandler(this.dataGridView2_SelectionChanged);
+            this.dataGridView2.MouseClick += new System.Windows.Forms.MouseEventHandler(this.dataGridView_MouseClick);
             // 
             // Form1
             // 

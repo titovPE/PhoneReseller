@@ -90,6 +90,41 @@ namespace PhoneReseller
             new SQLiteCommand(command, _myConnection).ExecuteNonQuery();
         }
 
+        /// <summary>
+        /// Загружает лог действий по указанному идентификатору телефона и выводит его в виде строки.
+        /// </summary>
+        /// <param name="id">Идентификатор телефона</param>
+        /// <returns></returns>
+        public static string ReadLogByPhineId(string id)
+        {
+
+            IEnumerable<DataRow> getRowsByCommand(string command)
+            {
+                DataTable table = new DataTable();
+
+                using (var da = new SQLiteDataAdapter(command, _myConnection))
+                    da.Fill(table);
+                var res = table.Rows.Cast<DataRow>().ToList();
+                return res;
+            }
+            var actionsTable = TableNames.Actions;
+            if (!CheckTableAvailability(actionsTable))
+            {
+                return "Логирование отключено, показывать нечего";
+            }
+
+            var queryString = $"SELECT Date, Action FROM {actionsTable} WHERE PhoneId = {id}";
+            var rows = getRowsByCommand(queryString)
+                .OrderBy(x => (DateTime)x["Date"])
+                .Select(x => $"{x["Date"]}: {x["Action"]}");
+            if (rows.Count() == 0)
+            {
+                return "не записано ни одного действия";
+            }
+            var result = rows.Aggregate((a, b) => a + "\n " + b);
+            return result;
+        }
+
         #endregion
 
         #region regular clients
