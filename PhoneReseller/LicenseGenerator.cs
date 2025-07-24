@@ -6,9 +6,9 @@ using System.Text;
 using System;
 using System.Runtime.InteropServices;
 
-namespace LicenseGenerator
+namespace PhoneReseller
 {
-    class KeySelector
+    class LicenseGenerator
     {
         const string DRIVE_NAME = @"\\.\PHYSICALDRIVE0";
         public void AddHddPropertyToList(List<string> listBox)

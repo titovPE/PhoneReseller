@@ -102,7 +102,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="Generators\SoldGenerator.cs" />
     <Compile Include="Generators\WorkersGenerator.cs" />
-    <Compile Include="KeySelector.cs" />
+    <Compile Include="LicenseGenerator.cs" />
     <Compile Include="Data\SQLiteDataConverter.cs" />
     <Compile Include="Data\DataProvider.cs" />
     <Compile Include="Data\DataRowExstesion.cs" />
