@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PhoneReseller.domain
+namespace LicenseGenerator.domain
 {
     public class Phone
     {

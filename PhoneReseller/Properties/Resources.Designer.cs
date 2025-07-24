@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace PhoneReseller.Properties {
+namespace LicenseGenerator.Properties {
     using System;
     
     

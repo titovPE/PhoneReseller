@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Data;
+using LicenseGenerator.Data;
 
-namespace PhoneReseller
+namespace LicenseGenerator
 {
     class GridController
     {

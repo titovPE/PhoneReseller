@@ -1,4 +1,4 @@
-﻿namespace PhoneReseller.Domain
+﻿namespace LicenseGenerator.Domain
 {
     /// <summary>
     /// Информация о человеке, продавшем телефон

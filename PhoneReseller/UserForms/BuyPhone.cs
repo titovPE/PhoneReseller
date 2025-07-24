@@ -1,9 +1,10 @@
-﻿using System;
+﻿using LicenseGenerator.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace PhoneReseller.UserForms
+namespace LicenseGenerator.UserForms
 {
   public partial class BuyPhone : Form, IReshower
   {

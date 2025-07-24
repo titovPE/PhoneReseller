@@ -4,15 +4,15 @@
     <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
       <DataSource DefaultConnectionIndex="1" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
         <Connections>
-          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="PhonesConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="PhonesConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.PhoneReseller.Properties.Settings.GlobalReference.Default.PhonesConnectionString" Provider="System.Data.SQLite" />
-          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="PhonesConnectionString1" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="PhonesConnectionString1 (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.PhoneReseller.Properties.Settings.GlobalReference.Default.PhonesConnectionString1" Provider="System.Data.SQLite" />
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="PhonesConnectionString" IsAppSettingsProperty="true" Modifier="Assembly" Name="PhonesConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.LicenseGenerator.Properties.Settings.GlobalReference.Default.PhonesConnectionString" Provider="System.Data.SQLite" />
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="PhonesConnectionString1" IsAppSettingsProperty="true" Modifier="Assembly" Name="PhonesConnectionString1 (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.LicenseGenerator.Properties.Settings.GlobalReference.Default.PhonesConnectionString1" Provider="System.Data.SQLite" />
         </Connections>
         <Tables />
         <Sources />
       </DataSource>
     </xs:appinfo>
   </xs:annotation>
-  <xs:element name="DataSet1" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_DataSetName="DataSet1" msprop:Generator_UserDSName="DataSet1">
+  <xs:element name="DataSet1" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="DataSet1" msprop:Generator_DataSetName="DataSet1">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded" />
     </xs:complexType>

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace PhoneReseller.UserForms
+namespace LicenseGenerator.UserForms
 {
     public partial class ReturnPhone : Form, IReshower
     {

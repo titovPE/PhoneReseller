@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Data.SQLite;
 
-namespace PhoneReseller
+namespace LicenseGenerator.Data
 {
   class LoadOldData
   {

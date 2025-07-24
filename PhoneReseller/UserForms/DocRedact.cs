@@ -4,8 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using LicenseGenerator.Data;
 
-namespace PhoneReseller.UserForms
+namespace LicenseGenerator.UserForms
 {
     public partial class DocPrinter : Form
     {

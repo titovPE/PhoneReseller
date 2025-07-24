@@ -3,7 +3,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Linq;
 
-namespace PhoneReseller
+namespace LicenseGenerator.Data
 {
   class MergeDB
   {

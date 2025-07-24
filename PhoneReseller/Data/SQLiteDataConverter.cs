@@ -4,13 +4,13 @@ using System.Windows.Forms;
 using System.Data;
 using System.Globalization;
 
-namespace PhoneReseller
+namespace LicenseGenerator.Data
 {
     static class SQLiteDataConverter
     {
         public static string CheckBoxCollectionToString(Control.ControlCollection collection)
         {
-            return collection.OfType<CheckBox>().Where(item => (item).Checked).Aggregate("", (current, item) => current + ((item).Text + ", "));
+            return collection.OfType<CheckBox>().Where(item => item.Checked).Aggregate("", (current, item) => current + item.Text + ", ");
         }
 
         public static string ShiftChar(string str, char finded, string forShift)
@@ -122,7 +122,7 @@ namespace PhoneReseller
         }
 
 
-        public static Double ToDouble(string dbString)
+        public static double ToDouble(string dbString)
         {
             for (int i = 0; i < dbString.Length; i++)
             {
@@ -173,7 +173,7 @@ namespace PhoneReseller
         {
             var result = entity.CloneTyped();
             if (entity.RoollBacked)
-                result.TableName = (entity.TableName == "Rec") ? "ToSell" : "Sold";
+                result.TableName = entity.TableName == "Rec" ? "ToSell" : "Sold";
             if (result.IsRow) return result;
             if (result.ContainsKey("Rollbacked"))
             {
@@ -195,7 +195,7 @@ namespace PhoneReseller
             if (result.ContainsKey("Worker")) result["Worker"] = AdaptStringToSQLite(result["Worker"]);
             if (result.ContainsKey("Seller")) result["Seller"] = AdaptStringToSQLite(result["Seller"]);
             bool tmp;
-            if (result.ContainsKey("IsRepared")) result["IsRepared"] = (bool.TryParse(result["IsRepared"], out tmp) && tmp) ? "1" : "0";
+            if (result.ContainsKey("IsRepared")) result["IsRepared"] = bool.TryParse(result["IsRepared"], out tmp) && tmp ? "1" : "0";
             if (result.ContainsKey("WorkReport")) result["WorkReport"] = AdaptStringToSQLite(result["WorkReport"]);
             if (result.ContainsKey("ReasonOfBack")) result["ReasonOfBack"] = AdaptStringToSQLite(result["ReasonOfBack"]);
             if (result.ContainsKey("PasportSer"))

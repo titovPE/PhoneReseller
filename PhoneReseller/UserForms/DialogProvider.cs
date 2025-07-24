@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PhoneReseller.UserForms
+namespace LicenseGenerator.UserForms
 {
     /// <summary>
     /// Поставщик форм диалогов. Что то ввроде контейнера зависимостей на минималках

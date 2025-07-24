@@ -7,10 +7,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml.Serialization;
-using PhoneReseller.UserForms;
+using LicenseGenerator.UserForms;
 using System.Globalization;
+using LicenseGenerator.Data;
 
-namespace PhoneReseller
+namespace LicenseGenerator
 {
     public partial class Form1 : Form
     {

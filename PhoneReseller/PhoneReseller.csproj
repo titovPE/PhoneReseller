@@ -103,18 +103,18 @@
     <Compile Include="Generators\SoldGenerator.cs" />
     <Compile Include="Generators\WorkersGenerator.cs" />
     <Compile Include="KeySelector.cs" />
-    <Compile Include="SQLiteDataConverter.cs" />
-    <Compile Include="DataProvider.cs" />
-    <Compile Include="DataRowExstesion.cs" />
+    <Compile Include="Data\SQLiteDataConverter.cs" />
+    <Compile Include="Data\DataProvider.cs" />
+    <Compile Include="Data\DataRowExstesion.cs" />
     <Compile Include="DataSet1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DataSet1.xsd</DependentUpon>
     </Compile>
-    <Compile Include="LoadOldData.cs" />
-    <Compile Include="MergeDB.cs" />
+    <Compile Include="Data\LoadOldData.cs" />
+    <Compile Include="Data\MergeDB.cs" />
     <Compile Include="OwnerExtention.cs" />
-    <Compile Include="TableNames.cs" />
+    <Compile Include="Data\TableNames.cs" />
     <Compile Include="UserForms\DayReport.cs">
       <SubType>Form</SubType>
     </Compile>

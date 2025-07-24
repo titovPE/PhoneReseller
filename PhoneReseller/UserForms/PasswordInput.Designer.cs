@@ -1,4 +1,4 @@
-﻿namespace PhoneReseller.UserForms
+﻿namespace LicenseGenerator.UserForms
 {
     partial class PasswordInput
     {

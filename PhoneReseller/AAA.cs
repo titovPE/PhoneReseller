@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace PhoneReseller
+namespace LicenseGenerator
 {
     public partial class AAA : Form
     {

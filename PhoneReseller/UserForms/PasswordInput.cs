@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace PhoneReseller.UserForms
+namespace LicenseGenerator.UserForms
 {
     public partial class PasswordInput : Form
     {

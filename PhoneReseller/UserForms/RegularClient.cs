@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LicenseGenerator.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,7 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using static System.Windows.Forms.AxHost;
 
-namespace PhoneReseller.UserForms
+namespace LicenseGenerator.UserForms
 {
     public partial class RegularClient : Form
     {

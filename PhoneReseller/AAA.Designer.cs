@@ -1,4 +1,4 @@
-﻿namespace PhoneReseller
+﻿namespace LicenseGenerator
 {
     partial class AAA
     {

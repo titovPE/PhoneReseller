@@ -9,7 +9,7 @@ using System.Reflection;
 using Microsoft.Win32;
 using System.Data.SqlClient;
 
-namespace PhoneReseller
+namespace LicenseGenerator.Data
 {
     internal static class DataProvider
     {
@@ -315,7 +315,7 @@ namespace PhoneReseller
         private static string WherelistTostring(List<string> whereList)
         {
             if (whereList.Count == 0) return "";
-            var result = whereList.Aggregate("WHERE   ", (current, item) => current + ("( " + item + ") AND"));
+            var result = whereList.Aggregate("WHERE   ", (current, item) => current + "( " + item + ") AND");
             return result.Substring(0, result.Length - 3);
         }
 
@@ -380,7 +380,7 @@ namespace PhoneReseller
                 values = values + id + " ," + (GetMaxNum() + 1);
             }
 
-            UpdateGlobalVariables((GetMaxID() + 1), (GetMaxNum() + 1));
+            UpdateGlobalVariables(GetMaxID() + 1, GetMaxNum() + 1);
             foreach (var item in valuesRow)
             {
                 if (item.Key == "ID" || item.Key == "Num") continue;
@@ -473,7 +473,7 @@ namespace PhoneReseller
         {
             var dictoinary = SQLiteDataConverter.DictionaryToSQLiteFormat(row);
             var command = "UPDATE       " + dictoinary.TableName + " SET ";
-            command = dictoinary.Aggregate(command, (current, item) => current + (item.Key + " = " + item.Value + " , "));
+            command = dictoinary.Aggregate(command, (current, item) => current + item.Key + " = " + item.Value + " , ");
             command = command.Substring(0, command.Length - 3) + " WHERE  (ID = " + dictoinary["ID"] + ")";
             new SQLiteCommand(command, _myConnection).ExecuteNonQuery();
             FillDataSet(dictoinary.TableName, null);
@@ -522,7 +522,7 @@ namespace PhoneReseller
         /// </summary>
         /// <param name="row"></param>
         /// <param name="newPrice"></param>
-        public static void UpdateSalePrice(ColumnsDictionary row, Double newPrice)
+        public static void UpdateSalePrice(ColumnsDictionary row, double newPrice)
         {
             var newRow = SQLiteDataConverter.DictionaryToSQLiteFormat(row);
 

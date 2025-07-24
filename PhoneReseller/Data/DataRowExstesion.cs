@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace PhoneReseller
+namespace LicenseGenerator.Data
 {
   public static  class DataRowExstesion
   {

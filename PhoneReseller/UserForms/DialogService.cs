@@ -1,11 +1,12 @@
 ﻿using System.Windows.Forms;
 using System.Data;
-using PhoneReseller.Domain;
+using LicenseGenerator.Domain;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using LicenseGenerator.Data;
 
-namespace PhoneReseller.UserForms
+namespace LicenseGenerator.UserForms
 {
   class DialogService
   {

@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using LicenseGenerator.Data;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-namespace PhoneReseller.Generators
+namespace LicenseGenerator.Generators
 {
     public static class WorkersGenerator
     {

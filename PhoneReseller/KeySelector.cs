@@ -6,7 +6,7 @@ using System.Text;
 using System;
 using System.Runtime.InteropServices;
 
-namespace PhoneReseller
+namespace LicenseGenerator
 {
     class KeySelector
     {

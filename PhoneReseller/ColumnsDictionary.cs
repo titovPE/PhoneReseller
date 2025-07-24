@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PhoneReseller
+namespace LicenseGenerator
 {
     public class ColumnsDictionary: Dictionary<string,string>,ICloneable
     {

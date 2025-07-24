@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Data;
-using PhoneReseller.domain;
+using LicenseGenerator.domain;
 
-namespace PhoneReseller.Generators
+namespace LicenseGenerator.Generators
 {
     public static class SoldGenerator
     {

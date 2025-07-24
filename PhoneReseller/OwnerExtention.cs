@@ -1,7 +1,7 @@
-﻿using PhoneReseller.Domain;
+﻿using LicenseGenerator.Domain;
 
 
-namespace PhoneReseller
+namespace LicenseGenerator
 {
   static class OwnerExtention
   {

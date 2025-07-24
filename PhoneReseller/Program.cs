@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace PhoneReseller
+namespace LicenseGenerator
 {
     static class Program
     {
