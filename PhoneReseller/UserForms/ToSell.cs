@@ -1,8 +1,10 @@
 ﻿using LicenseGenerator.Data;
+using PhoneReseller.UserForms;
 using System;
 using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
+using PhoneReseller.Entities;
 
 namespace LicenseGenerator.UserForms
 {
@@ -176,7 +178,7 @@ namespace LicenseGenerator.UserForms
           }
           //if (!FormValidator.Validated) { MessageBox.Show("не заполненны следующие поля: " + FormValidator.FailedFields); return; }
           DataProvider.MooveRow(phone, "Sold");
-            DataProvider.AddActionLog(phone["ID"], $"Телефон помечен как не подлежащий к продаже", phone["Worker"]);
+            DataProvider.AddActionLog(phone["ID"], $"Телефон помечен как не подлежащий к продаже", phone["Worker"], ActionType.setAsNotForSale);
             Close();
         }
 

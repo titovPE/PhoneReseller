@@ -5,8 +5,11 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using LicenseGenerator.Data;
+using LicenseGenerator;
+using LicenseGenerator.UserForms;
+using PhoneReseller.Entities;
 
-namespace LicenseGenerator.UserForms
+namespace PhoneReseller.UserForms
 {
   class DialogService
   {
@@ -16,41 +19,55 @@ namespace LicenseGenerator.UserForms
             if (phone == null) return;
             Cache.PutSingle(new PhoneOwner().Extract(phone));
             var id = DataProvider.CreateRow(phone);
-            DataProvider.AddActionLog($"{id}", "Создана запись о покупке", phone["Acceptor"]);
+            DataProvider.AddActionLog($"{id}", "Создана запись о покупке", phone["Acceptor"], ActionType.buyPhone);
             if (printDoc)
                 new DocPrinter(phone);
         }
 
         public static void Transaction(string dialogName, ColumnsDictionary entity)
         {
-            string getActionName(string tabelName){
-            
-                switch(tabelName)
+              ActionTypeWithComment getActionName(string tabelName)
+            {
+                switch (tabelName)
                 {
                     case "ToSell":
-                        return "на продажу";
+                        return new ActionTypeWithComment
+                        {
+                            Value = ActionType.setAsForSale,
+                            Comment = "на продажу"
+                        };
                     case "Sold":
-                        return "в проданные";
+                        return new ActionTypeWithComment
+                        {
+                            Value = ActionType.soldPhone,
+                            Comment = "в проданные"
+                        };
                 }
-                return "";
-            };
+                return new ActionTypeWithComment
+                {
+                    Value = ActionType.undefined,
+                    Comment = "<НЕ УДАЛОСЬ ОПРЕДЕЛИТЬ ДЕЙСТВИЕ НАД ТЕЛЕФОНОМ>"
+                };
+            }
+            ;
 
             var phone = DialogProvider.GetForm(dialogName).ShowMe(entity);
             if (phone == null) return;
             //Особенная логика для телефонов, которые были откачены
-            if (entity.ContainsKey("Rollbacked") && (bool.Parse(entity["Rollbacked"])))
+            if (entity.ContainsKey("Rollbacked") && bool.Parse(entity["Rollbacked"]))
             {
                 entity["Rollbacked"] = false.ToString();
                 entity.RoollBacked = false;
                 var prevTable = phone.TableName;
                 phone.TableName = prevTable == "Rec" ? "ToSell" : "Sold";
                 DataProvider.UpdateRow(phone);
-                var actionName = getActionName(phone.TableName);
-                DataProvider.AddActionLog(phone["ID"], $"Откаченый телефон переведен {actionName}", phone["Worker"]);
+                var localAction = getActionName(phone.TableName);
+                DataProvider.AddActionLog(phone["ID"], $"Откаченый телефон переведен {localAction.Comment}", phone["Worker"],localAction.Value);
                 DataProvider.GetTable(prevTable);
             }
             else DataProvider.MooveRow(phone, dialogName);
-            DataProvider.AddActionLog(phone["ID"], $"Телефон переведен {getActionName(dialogName)}", phone["Worker"]);
+            var action = getActionName(dialogName);
+            DataProvider.AddActionLog(phone["ID"], $"Телефон переведен {action.Comment}", phone["Worker"], action.Value);
             phone.TableName = dialogName;
             new DocPrinter(phone);
         }
@@ -64,7 +81,7 @@ namespace LicenseGenerator.UserForms
                 phone["Rollbacked"] = entity["Rollbacked"];
             phone.RoollBacked = entity.RoollBacked;
             DataProvider.UpdateRow(phone);
-            DataProvider.AddActionLog(phone["ID"], "Редактирование телефона", phone["Worker"]);
+            DataProvider.AddActionLog(phone["ID"], "Редактирование телефона", phone["Worker"], ActionType.editPhone);
             DataProvider.GetTable(tname);
         }
 
@@ -114,16 +131,16 @@ namespace LicenseGenerator.UserForms
             foreach (var item in controls)
             {
                 if (item is GroupBox) FillText(((GroupBox)item).Controls, row);
-                if (!row.ContainsKey(((Control)item).Name)) continue;
+                if (!row.ContainsKey(item.Name)) continue;
                 //if (!row.IsNull(((Control)item).Name)) continue;
-                if ((item is TextBox) || (item is ComboBox))
+                if (item is TextBox || item is ComboBox)
                 {
-                    if (row[((Control)item).Name].ToString() == "0") continue;
-                    ((Control)item).Text = row[((Control)item).Name].ToString();
+                    if (row[item.Name].ToString() == "0") continue;
+                    item.Text = row[item.Name].ToString();
                 }
                 if (item is DateTimePicker)
                 {
-                    var date = row[((Control)item).Name];
+                    var date = row[item.Name];
                     ((DateTimePicker)item).Value = SQLiteDataConverter.ToDate(date);//(DateTime)row[((Control)item).Name];
                 }
             }

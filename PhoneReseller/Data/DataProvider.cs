@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using System.Reflection;
 using Microsoft.Win32;
 using System.Data.SqlClient;
+using PhoneReseller.Entities;
 
 namespace LicenseGenerator.Data
 {
@@ -56,6 +57,23 @@ namespace LicenseGenerator.Data
                 .Any(it => it.ToString() == tableName);
         }
 
+        internal static int ExecuteNonQuery(string command)
+        {
+            using (var myCommand = new SQLiteCommand(command, _myConnection))
+            {
+                return myCommand.ExecuteNonQuery();
+            }
+        }
+        public static IEnumerable<DataRow> getRowsByCommand(string command)
+        {
+            DataTable table = new DataTable();
+
+            using (var da = new SQLiteDataAdapter(command, _myConnection))
+                da.Fill(table);
+            var res = table.Rows.Cast<DataRow>().ToList();
+            return res;
+        }
+
         #region Ations log
         //фича для работы с логом действий пользователя
 
@@ -74,19 +92,20 @@ namespace LicenseGenerator.Data
                             , [Worker] NVARCHAR(50) NOT NULL COLLATE NOCASE
                             );
                             CREATE INDEX [Actions_phone_index] ON [{actionsTable}] ([PhoneId] ASC);";
-            new SQLiteCommand(command, _myConnection).ExecuteNonQuery();
+            ExecuteNonQuery(command);
             MessageBox.Show("Лог действий успешно в ключен и будет автоматически записываться.");
         }
 
-        public static void AddActionLog(string phoneId, string action, string worker)
+        public static void AddActionLog(string phoneId, string note, string worker, ActionType action)
         {
             var actionsTable = TableNames.Actions;
             if (!CheckTableAvailability(actionsTable))
             {
                 return;
             }
-            var command = $"INSERT INTO {actionsTable} (PhoneId, Date, Action, Worker) " +
-                      $"VALUES ({phoneId}, '{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}', '{action}', '{worker}')";
+            //Здесь Action и Note перепутаны местами. Перваначальый дизайн подразумевал , что Action - это просто описание действия, а код события отсутствовал
+            var command = $"INSERT INTO {actionsTable} (PhoneId, Date, Action, Worker, Code) " +
+                      $"VALUES ({phoneId}, '{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}', '{note}', '{worker}', '{action}')";
             new SQLiteCommand(command, _myConnection).ExecuteNonQuery();
         }
 
@@ -97,16 +116,6 @@ namespace LicenseGenerator.Data
         /// <returns></returns>
         public static string ReadLogByPhineId(string id)
         {
-
-            IEnumerable<DataRow> getRowsByCommand(string command)
-            {
-                DataTable table = new DataTable();
-
-                using (var da = new SQLiteDataAdapter(command, _myConnection))
-                    da.Fill(table);
-                var res = table.Rows.Cast<DataRow>().ToList();
-                return res;
-            }
             var actionsTable = TableNames.Actions;
             if (!CheckTableAvailability(actionsTable))
             {

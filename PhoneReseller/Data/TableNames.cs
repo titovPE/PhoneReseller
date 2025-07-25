@@ -10,7 +10,9 @@ namespace LicenseGenerator.Data
         //эта таблица не используется, 
         public static string Clients = "Clients";
         public static string Vars = "GlobalVariables";
-        //Таблиза для хранения лога действий пользователя
+        //Таблица для хранения лога действий пользователя
         public static string Actions = "Actions";
+        //* Таблица истории касс */
+        public static string Sessions = "Sessions";
     }
 }

@@ -100,6 +100,10 @@
     <None Include="changelog.md" />
     <Compile Include="ColumnsDictionary.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Data\SessionRepository.cs" />
+    <Compile Include="Entities\ActionType.cs" />
+    <Compile Include="Entities\ActionTypeWithComment.cs" />
+    <Compile Include="Entities\Session.cs" />
     <Compile Include="Generators\SoldGenerator.cs" />
     <Compile Include="Generators\WorkersGenerator.cs" />
     <Compile Include="LicenseGenerator.cs" />
@@ -269,6 +273,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="TODO.MD" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="2.ico" />
