@@ -1,8 +1,10 @@
-﻿using PhoneReseller.Data;
+﻿using LicenseGenerator.Data;
+using PhoneReseller.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows.Forms;
 
 namespace PhoneReseller.Entities
 {
@@ -16,6 +18,29 @@ namespace PhoneReseller.Entities
         public DateTime date;
         /** когда была открыта сессия, тоесть когда операции начали сыпаться в неё */
         public DateTime startedAt;
+
+        public static bool IsEnabled()
+        {
+            return DataProvider.CheckTableAvailability(TableNames.Sessions);
+        }
+
+        public static Session openWithDialog(DateTime currentSessionDate)
+        {
+            if (currentSessionDate > DateTime.Now)
+            {
+                MessageBox.Show("Сессия уже открыта на завтра, пока открыть новую нельзя");
+                return null;
+            }
+
+            if (MessageBox.Show("открыть новую кассу на завтрашний день?", "Открытие сессии", MessageBoxButtons.OKCancel) ==
+               DialogResult.Cancel) return null;
+            var result = Session.OpenNew();
+            if (result == null)
+            {
+                MessageBox.Show("Не удалось открыть новую кассу, возможно, она уже открыта");
+            }
+            return result;
+        }
 
         /** Открыть новую сессиию на правильный день, если это возможно*/
         public static Session OpenNew() {     

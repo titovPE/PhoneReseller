@@ -11,6 +11,8 @@ using LicenseGenerator.UserForms;
 using System.Globalization;
 using LicenseGenerator.Data;
 using PhoneReseller.UserForms;
+using PhoneReseller.Data;
+using PhoneReseller.Entities;
 
 namespace LicenseGenerator
 {
@@ -22,21 +24,26 @@ namespace LicenseGenerator
             "</Modulus>" + "<Exponent>" + "AQAB" + "</Exponent>" + "</RSAKeyValue>";
 
         private int _lastPage;
-        private bool IsAutocompleteEnabled = false;
+        private bool IsAutocompleteEnabled = true;
+        private bool IsSessionEnabled = false;
 
         /** Флаг показывает что было нажато первое сочетание клавиш для показа примечаний */
         private bool IsPrevousKeyRight = false;
 
         private Config config = Config.GetInstance();
+        private DateTime currentSessionDate = DateTime.MinValue;
 
         public Form1()
         {
             if (!VerifyMotherBoard()) Close();
             InitializeComponent();
-            Text = Text + " v 12.9.0";
+            Text = Text + " v 12.10.0";
             DataProvider.Inicialize(config.DbPath);
             DialogProvider.Inicialize();
-            IsAutocompleteEnabled = DataProvider.CheckAutocompleteEnabled();
+            IsSessionEnabled = Session.IsEnabled();
+            timer1.Enabled = true;
+            if (IsSessionEnabled)
+                currentSessionDate = new SessionRepository().getLastDate();
         }
 
         private bool VerifyMotherBoard()
@@ -282,7 +289,7 @@ namespace LicenseGenerator
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void dataGridView2_SelectionChanged(object sender, EventArgs e) 
+        private void dataGridView2_SelectionChanged(object sender, EventArgs e)
         {
             SoldState.ForeColor = Color.Red;
             var row = GetSelectedRow(dataGridView2);
@@ -652,6 +659,24 @@ namespace LicenseGenerator
         {
             DataProvider.EnableActionsLog();
 
+        }
+
+        private void ToolStripMenuItemOpenSession_Click(object sender, EventArgs e)
+        {
+            var result = Session.openWithDialog(currentSessionDate);
+            if (result != null) currentSessionDate = result.date;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (DateTime.Now <= currentSessionDate)
+                return;
+            var result = Session.OpenNew();
+            if (result != null)
+            {
+                currentSessionDate = result.date;
+                MessageBox.Show("Открыта новая сессия на " + currentSessionDate.ToShortDateString(), "Сессия открыта");
+            }
         }
     }
 
