@@ -226,6 +226,7 @@
             this.кассаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.открытьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.button18 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1633,7 +1634,7 @@
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(1336, 771);
             this.tabPage3.TabIndex = 2;
-            this.tabPage3.Text = "Администрирование";
+            this.tabPage3.Text = "Архив";
             // 
             // button16
             // 
@@ -1648,6 +1649,7 @@
             // 
             // admin_Panel
             // 
+            this.admin_Panel.Controls.Add(this.button18);
             this.admin_Panel.Controls.Add(this.button17);
             this.admin_Panel.Controls.Add(this.button15);
             this.admin_Panel.Controls.Add(this.Merge);
@@ -1667,7 +1669,7 @@
             // 
             // button17
             // 
-            this.button17.Location = new System.Drawing.Point(163, 56);
+            this.button17.Location = new System.Drawing.Point(278, 78);
             this.button17.Name = "button17";
             this.button17.Size = new System.Drawing.Size(216, 23);
             this.button17.TabIndex = 76;
@@ -2638,7 +2640,7 @@
             // открытьToolStripMenuItem
             // 
             this.открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
-            this.открытьToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.открытьToolStripMenuItem.Size = new System.Drawing.Size(150, 26);
             this.открытьToolStripMenuItem.Text = "Открыть";
             this.открытьToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItemOpenSession_Click);
             // 
@@ -2646,6 +2648,16 @@
             // 
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // button18
+            // 
+            this.button18.Location = new System.Drawing.Point(278, 49);
+            this.button18.Name = "button18";
+            this.button18.Size = new System.Drawing.Size(216, 23);
+            this.button18.TabIndex = 77;
+            this.button18.Text = "Включить кассы";
+            this.button18.UseVisualStyleBackColor = true;
+            this.button18.Click += new System.EventHandler(this.button18_Click);
             // 
             // Form1
             // 
@@ -2898,6 +2910,7 @@
         private System.Windows.Forms.ToolStripMenuItem кассаToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem открытьToolStripMenuItem;
         private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Button button18;
     }
 }
 

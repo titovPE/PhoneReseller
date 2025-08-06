@@ -1,4 +1,4 @@
-﻿using LicenseGenerator.Data;
+﻿using PhoneReseller.Data;
 using PhoneReseller.UserForms;
 using System;
 using System.Collections.Generic;

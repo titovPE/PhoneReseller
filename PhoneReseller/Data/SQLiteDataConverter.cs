@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Windows.Forms;
 using System.Data;
-using System.Globalization;
+using LicenseGenerator;
 
-namespace LicenseGenerator.Data
+namespace PhoneReseller.Data
 {
     static class SQLiteDataConverter
     {

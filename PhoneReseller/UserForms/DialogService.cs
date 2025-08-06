@@ -1,13 +1,14 @@
-﻿using System.Windows.Forms;
-using System.Data;
-using LicenseGenerator.Domain;
-using System;
-using System.Linq;
-using System.Collections.Generic;
+﻿using LicenseGenerator;
 using LicenseGenerator.Data;
-using LicenseGenerator;
+using LicenseGenerator.Domain;
 using LicenseGenerator.UserForms;
+using PhoneReseller.Data;
 using PhoneReseller.Entities;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Windows.Forms;
 
 namespace PhoneReseller.UserForms
 {
@@ -19,7 +20,8 @@ namespace PhoneReseller.UserForms
             if (phone == null) return;
             Cache.PutSingle(new PhoneOwner().Extract(phone));
             var id = DataProvider.CreateRow(phone);
-            DataProvider.AddActionLog($"{id}", "Создана запись о покупке", phone["Acceptor"], ActionType.buyPhone);
+            var cost = phone.ContainsKey("Cost") ? phone["Cost"] : "0";
+            ActionsRepository.AddActionLog($"{id}", "Создана запись о покупке", phone["Acceptor"], ActionType.buyPhone, decimal.Parse(cost));
             if (printDoc)
                 new DocPrinter(phone);
         }
@@ -53,6 +55,8 @@ namespace PhoneReseller.UserForms
 
             var phone = DialogProvider.GetForm(dialogName).ShowMe(entity);
             if (phone == null) return;
+            var price = phone.ContainsKey("Price") ? phone["Price"] : "0";
+            var parsedPrice  = decimal.Parse(price);
             //Особенная логика для телефонов, которые были откачены
             if (entity.ContainsKey("Rollbacked") && bool.Parse(entity["Rollbacked"]))
             {
@@ -62,12 +66,12 @@ namespace PhoneReseller.UserForms
                 phone.TableName = prevTable == "Rec" ? "ToSell" : "Sold";
                 DataProvider.UpdateRow(phone);
                 var localAction = getActionName(phone.TableName);
-                DataProvider.AddActionLog(phone["ID"], $"Откаченый телефон переведен {localAction.Comment}", phone["Worker"],localAction.Value);
+                ActionsRepository.AddActionLog(phone["ID"], $"Откаченый телефон переведен {localAction.Comment}", phone["Worker"],localAction.Value, parsedPrice);
                 DataProvider.GetTable(prevTable);
             }
             else DataProvider.MooveRow(phone, dialogName);
             var action = getActionName(dialogName);
-            DataProvider.AddActionLog(phone["ID"], $"Телефон переведен {action.Comment}", phone["Worker"], action.Value);
+            ActionsRepository.AddActionLog(phone["ID"], $"Телефон переведен {action.Comment}", phone["Worker"], action.Value, parsedPrice);
             phone.TableName = dialogName;
             new DocPrinter(phone);
         }
@@ -81,7 +85,7 @@ namespace PhoneReseller.UserForms
                 phone["Rollbacked"] = entity["Rollbacked"];
             phone.RoollBacked = entity.RoollBacked;
             DataProvider.UpdateRow(phone);
-            DataProvider.AddActionLog(phone["ID"], "Редактирование телефона", phone["Worker"], ActionType.editPhone);
+            ActionsRepository.AddActionLog(phone["ID"], "Редактирование телефона", phone["Worker"], ActionType.editPhone);
             DataProvider.GetTable(tname);
         }
 

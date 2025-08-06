@@ -18,6 +18,8 @@ namespace LicenseGenerator
 {
     public partial class Form1 : Form
     {
+        private const string version = "13.0.0";
+
         private const string Key =
             "<RSAKeyValue>" + "<Modulus>" +
             "kjndJ2lmTurT63Jp+bqKQPWY1AJS9eFJrc3NAtBZ74v0AhR5VzuO8tsIW8LxQ0Emu/Ntz6r7g7NLpzsQQpzdP2fDft0gCiSGzeks2Ig8nr/N1cInhM95rc2v1hWuzX55miFn38xXaFCVO9lrj6iuyXGqxt+VIBFD6y2tKgbBhBc=" +
@@ -37,11 +39,11 @@ namespace LicenseGenerator
         {
             if (!VerifyMotherBoard()) Close();
             InitializeComponent();
-            Text = Text + " v 12.10.0";
+            Text = Text + " v "+version;
             DataProvider.Inicialize(config.DbPath);
             DialogProvider.Inicialize();
             IsSessionEnabled = Session.IsEnabled();
-            timer1.Enabled = true;
+            timer1.Enabled = IsSessionEnabled;
             if (IsSessionEnabled)
                 currentSessionDate = new SessionRepository().getLastDate();
         }
@@ -345,7 +347,7 @@ namespace LicenseGenerator
                 var row = GetSelectedRow((DataGridView)sender);
                 if (row == null) return;
                 var phoneID = SQLiteDataConverter.RowToDictionary(row)["ID"];
-                var result = DataProvider.ReadLogByPhineId(phoneID);
+                var result = ActionsRepository.ReadLogByPhineId(phoneID);
                 MessageBox.Show(result);
             }
         }
@@ -657,8 +659,13 @@ namespace LicenseGenerator
 
         private void button17_Click_2(object sender, EventArgs e)
         {
-            DataProvider.EnableActionsLog();
+            ActionsRepository.EnableActionsLog();
+        }
 
+        private void button18_Click(object sender, EventArgs e)
+        {
+            SessionRepository.EnableSessions();
+            timer1.Enabled = true;
         }
 
         private void ToolStripMenuItemOpenSession_Click(object sender, EventArgs e)
@@ -669,13 +676,13 @@ namespace LicenseGenerator
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            if (DateTime.Now <= currentSessionDate)
+            if (DateTime.Now.Date <= currentSessionDate)
                 return;
             var result = Session.OpenNew();
             if (result != null)
             {
                 currentSessionDate = result.date;
-                MessageBox.Show("Открыта новая сессия на " + currentSessionDate.ToShortDateString(), "Сессия открыта");
+                MessageBox.Show("Открыта новая касса на " + currentSessionDate.ToShortDateString(), "Сессия открыта");
             }
         }
     }

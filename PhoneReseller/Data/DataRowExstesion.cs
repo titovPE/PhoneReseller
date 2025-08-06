@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using PhoneReseller.Data;
+using System.Data;
 
 namespace LicenseGenerator.Data
 {

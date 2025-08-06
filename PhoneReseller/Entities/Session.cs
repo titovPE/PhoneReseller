@@ -32,7 +32,7 @@ namespace PhoneReseller.Entities
                 return null;
             }
 
-            if (MessageBox.Show("открыть новую кассу на завтрашний день?", "Открытие сессии", MessageBoxButtons.OKCancel) ==
+            if (MessageBox.Show("открыть новую кассу на завтрашний день?", "Открытие кассы", MessageBoxButtons.OKCancel) ==
                DialogResult.Cancel) return null;
             var result = Session.OpenNew();
             if (result == null)

@@ -26,7 +26,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>12.6.3.0</ApplicationVersion>
+    <ApplicationVersion>13.0.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -100,6 +100,7 @@
     <None Include="changelog.md" />
     <Compile Include="ColumnsDictionary.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Data\ActionsRepository.cs" />
     <Compile Include="Data\SessionRepository.cs" />
     <Compile Include="Entities\ActionType.cs" />
     <Compile Include="Entities\ActionTypeWithComment.cs" />
