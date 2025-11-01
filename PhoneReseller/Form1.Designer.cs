@@ -1700,12 +1700,12 @@
             // button15
             // 
             this.button15.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button15.Location = new System.Drawing.Point(351, 523);
+            this.button15.Location = new System.Drawing.Point(298, 523);
             this.button15.Margin = new System.Windows.Forms.Padding(4);
             this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(133, 28);
+            this.button15.Size = new System.Drawing.Size(186, 28);
             this.button15.TabIndex = 75;
-            this.button15.Text = "Отчет за день";
+            this.button15.Text = "Отчет администратора";
             this.button15.UseVisualStyleBackColor = true;
             this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
