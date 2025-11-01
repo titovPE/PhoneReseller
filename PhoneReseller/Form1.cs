@@ -18,7 +18,7 @@ namespace LicenseGenerator
 {
     public partial class Form1 : Form
     {
-        private const string version = "13.0.0";
+        private const string version = "13.1.0";
 
         private const string Key =
             "<RSAKeyValue>" + "<Modulus>" +
