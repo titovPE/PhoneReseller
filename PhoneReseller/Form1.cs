@@ -682,7 +682,7 @@ namespace LicenseGenerator
             if (result != null)
             {
                 currentSessionDate = result.date;
-                MessageBox.Show("Открыта новая касса на " + currentSessionDate.ToShortDateString(), "Сессия открыта");
+                MessageBox.Show("Выполнена сверка за " + currentSessionDate.AddDays(-1).ToShortDateString(), "Выполнена сверка");
             }
         }
     }

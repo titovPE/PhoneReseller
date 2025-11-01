@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace PhoneReseller.Entities
 {
     /** 
-     * Торговая сессия, в интерфейсе "Касса" время в течение котрого 
+     * Торговая сессия, в интерфейсе "Сверка" время в течение котрого 
      * все телефоны будут сгруппированы как купленныее в один день 
      */
     internal class Session
@@ -28,16 +28,21 @@ namespace PhoneReseller.Entities
         {
             if (currentSessionDate > DateTime.Now)
             {
-                MessageBox.Show("Сессия уже открыта на завтра, пока открыть новую нельзя");
+                MessageBox.Show(SessionMessages.SessionAlreadyOpen);
                 return null;
             }
 
-            if (MessageBox.Show("открыть новую кассу на завтрашний день?", "Открытие кассы", MessageBoxButtons.OKCancel) ==
-               DialogResult.Cancel) return null;
+            if (
+                MessageBox.Show(SessionMessages.SeccionOpenConfirmation, SessionMessages.SeessionConfirmationHeader, MessageBoxButtons.OKCancel)
+                == DialogResult.Cancel
+               )
+            {
+                return null;
+            }
             var result = Session.OpenNew();
             if (result == null)
             {
-                MessageBox.Show("Не удалось открыть новую кассу, возможно, она уже открыта");
+                MessageBox.Show(SessionMessages.SessionOpenError);
             }
             return result;
         }
@@ -61,4 +66,15 @@ namespace PhoneReseller.Entities
             return result;
         }
     }
+
+    static class SessionMessages { 
+        public const string SessionAlreadyOpen = "Серка за сегодня уже есть, пока сдеелать новую нельзя";
+        public const string SessionOpenError = "Не удаось создать новую свееку, возможно, она уже есть";
+        public const string SessionEnabledInfo = "Свеки успешно включены и будут автоматически записываться.";
+        public const string SeccionOpenConfirmation = "Выполнить сверку за сегодня?";
+        public const string SeessionConfirmationHeader = "Создание сверки";
+    }
+
+
+
 }

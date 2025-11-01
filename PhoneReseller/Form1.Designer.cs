@@ -142,6 +142,7 @@
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.button16 = new System.Windows.Forms.Button();
             this.admin_Panel = new System.Windows.Forms.Panel();
+            this.button18 = new System.Windows.Forms.Button();
             this.button17 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
             this.Merge = new System.Windows.Forms.Button();
@@ -223,10 +224,9 @@
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.printDocument1 = new System.Drawing.Printing.PrintDocument();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.кассаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.открытьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.button18 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -1667,6 +1667,16 @@
             this.admin_Panel.Size = new System.Drawing.Size(497, 574);
             this.admin_Panel.TabIndex = 74;
             // 
+            // button18
+            // 
+            this.button18.Location = new System.Drawing.Point(278, 49);
+            this.button18.Name = "button18";
+            this.button18.Size = new System.Drawing.Size(216, 23);
+            this.button18.TabIndex = 77;
+            this.button18.Text = "Включить сверки";
+            this.button18.UseVisualStyleBackColor = true;
+            this.button18.Click += new System.EventHandler(this.button18_Click);
+            // 
             // button17
             // 
             this.button17.Location = new System.Drawing.Point(278, 78);
@@ -2621,7 +2631,7 @@
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.кассаToolStripMenuItem});
+            this.sessionToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
@@ -2629,35 +2639,25 @@
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // кассаToolStripMenuItem
+            // sessionToolStripMenuItem
             // 
-            this.кассаToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.sessionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.открытьToolStripMenuItem});
-            this.кассаToolStripMenuItem.Name = "кассаToolStripMenuItem";
-            this.кассаToolStripMenuItem.Size = new System.Drawing.Size(62, 24);
-            this.кассаToolStripMenuItem.Text = "Касса";
+            this.sessionToolStripMenuItem.Name = "sessionToolStripMenuItem";
+            this.sessionToolStripMenuItem.Size = new System.Drawing.Size(72, 24);
+            this.sessionToolStripMenuItem.Text = "Сверка";
             // 
             // открытьToolStripMenuItem
             // 
             this.открытьToolStripMenuItem.Name = "открытьToolStripMenuItem";
-            this.открытьToolStripMenuItem.Size = new System.Drawing.Size(150, 26);
-            this.открытьToolStripMenuItem.Text = "Открыть";
+            this.открытьToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.открытьToolStripMenuItem.Text = "Выполнить сверку";
             this.открытьToolStripMenuItem.Click += new System.EventHandler(this.ToolStripMenuItemOpenSession_Click);
             // 
             // timer1
             // 
             this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // button18
-            // 
-            this.button18.Location = new System.Drawing.Point(278, 49);
-            this.button18.Name = "button18";
-            this.button18.Size = new System.Drawing.Size(216, 23);
-            this.button18.TabIndex = 77;
-            this.button18.Text = "Включить кассы";
-            this.button18.UseVisualStyleBackColor = true;
-            this.button18.Click += new System.EventHandler(this.button18_Click);
             // 
             // Form1
             // 
@@ -2907,7 +2907,7 @@
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.Button button17;
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem кассаToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sessionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem открытьToolStripMenuItem;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button button18;

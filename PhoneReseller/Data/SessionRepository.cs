@@ -29,7 +29,7 @@ namespace PhoneReseller.Data
             var sessionsTable = TableNames.Sessions;
             if (DataProvider.CheckTableAvailability(sessionsTable))
             {
-                MessageBox.Show("Сессии уже включены ранее. Сейчас ничего сделано не будет");
+                MessageBox.Show("Сверки уже включены ранее. Сейчас ничего сделано не будет");
                 return;
             }
             var actionsCommand = $"ALTER TABLE {TableNames.Actions} ADD COLUMN Code NVARCHAR(50);" +
@@ -42,7 +42,7 @@ namespace PhoneReseller.Data
                             );
                             CREATE INDEX [Sessions_date_index] ON [{sessionsTable}] ([Date] ASC);";
             DataProvider.ExecuteNonQuery(command);
-            MessageBox.Show("Сессии успешно включены и будут автоматически записываться.");
+            MessageBox.Show(SessionEnabledInfo);
         }
     }
 }

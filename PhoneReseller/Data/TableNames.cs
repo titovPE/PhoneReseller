@@ -12,7 +12,7 @@ namespace LicenseGenerator.Data
         public static string Vars = "GlobalVariables";
         //Таблица для хранения лога действий пользователя
         public static string Actions = "Actions";
-        //* Таблица истории касс */
+        //* Таблица истории Сверок */
         public static string Sessions = "Sessions";
     }
 }
