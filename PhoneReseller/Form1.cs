@@ -112,7 +112,7 @@ namespace LicenseGenerator
             dataGridView1.Columns["DateApprowed"].Width = 70;
 
 
-            dataGridView2.DataSource = DataProvider.GetTable("Sold");
+            dataGridView2.DataSource = DataProvider.GetTable(TableNames.Sold);
             GridController.FillColumns(dataGridView2);
             dataGridView2.Columns["Num"].Width = 40;
 
@@ -194,7 +194,7 @@ namespace LicenseGenerator
         private void button3_Click(object sender, EventArgs e)
         {
             var row = GetSelectedRow(dataGridView1);
-            DialogService.Transaction("Sold", row.ToDictionary());
+            DialogService.Transaction(TableNames.Sold, row.ToDictionary());
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -684,6 +684,23 @@ namespace LicenseGenerator
                 currentSessionDate = result.date;
                 MessageBox.Show("Выполнена сверка за " + currentSessionDate.AddDays(-1).ToShortDateString(), "Выполнена сверка");
             }
+        }
+
+        private void SessionHistoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new SessionHistory().ShowDialog();
+        }
+
+        private void button19_Click(object sender, EventArgs e)
+        {
+
+            new DayReport().ShowReducedDialog();
+        }
+
+        private void button19_Click_1(object sender, EventArgs e)
+        {
+            var result = Session.openWithDialog(currentSessionDate);
+            if (result != null) currentSessionDate = result.date;
         }
     }
 

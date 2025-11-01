@@ -71,8 +71,9 @@ namespace PhoneReseller.Entities
         public const string SessionAlreadyOpen = "Серка за сегодня уже есть, пока сдеелать новую нельзя";
         public const string SessionOpenError = "Не удаось создать новую свееку, возможно, она уже есть";
         public const string SessionEnabledInfo = "Свеки успешно включены и будут автоматически записываться.";
-        public const string SeccionOpenConfirmation = "Выполнить сверку за сегодня?";
-        public const string SeessionConfirmationHeader = "Создание сверки";
+        public const string SeccionOpenConfirmation = "Дневной отчет делается только 1 раз в сутки. После его создания все операции с телефонами будут выполнятся в рамках следующего оттчета. Его можно будет создать Завтра. " +
+            "\n\nПродолжить создание отчета?";
+        public const string SeessionConfirmationHeader = "Создание дневного отчета";
     }
 
 

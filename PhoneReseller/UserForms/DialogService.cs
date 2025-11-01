@@ -38,7 +38,7 @@ namespace PhoneReseller.UserForms
                             Value = ActionType.setAsForSale,
                             Comment = "на продажу"
                         };
-                    case "Sold":
+                    case TableNames.Sold:
                         return new ActionTypeWithComment
                         {
                             Value = ActionType.soldPhone,
@@ -63,7 +63,7 @@ namespace PhoneReseller.UserForms
                 entity["Rollbacked"] = false.ToString();
                 entity.RoollBacked = false;
                 var prevTable = phone.TableName;
-                phone.TableName = prevTable == "Rec" ? "ToSell" : "Sold";
+                phone.TableName = prevTable == "Rec" ? "ToSell" : TableNames.Sold;
                 DataProvider.UpdateRow(phone);
                 var localAction = getActionName(phone.TableName);
                 ActionsRepository.AddActionLog(phone["ID"], $"Откаченый телефон переведен {localAction.Comment}", phone["Worker"],localAction.Value, parsedPrice);
@@ -93,7 +93,7 @@ namespace PhoneReseller.UserForms
     {
         var phone = DialogProvider.GetForm("ReturnPhone").ShowMe(entity);
         if (phone == null) return;
-        phone.TableName = "Sold";
+        phone.TableName = TableNames.Sold;
         DataProvider.UpdateRow(phone);
         DataProvider.GetTable("ToSell");
     }

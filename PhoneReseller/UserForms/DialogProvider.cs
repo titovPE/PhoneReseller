@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LicenseGenerator.Data;
+using System;
 using System.Collections.Generic;
 
 namespace LicenseGenerator.UserForms
@@ -15,7 +16,7 @@ namespace LicenseGenerator.UserForms
           {//todo переделать, что бы формы сами выдавали свои имена и это определялось в IReshower
             {"Rec",new BuyPhone()},
             {"ToSell", new ToSell()},
-            {"Sold", new SellPhone()},
+            {TableNames.Sold, new SellPhone()},
             {"NotBuy", new NotBuy()},
             {"ReturnPhone", new ReturnPhone()},
             {"PriceUp", new PriceUp()},

@@ -31,7 +31,7 @@ namespace LicenseGenerator.Data
       myDataAdapter.Fill(_myDataSet, "Rec");
 
       myDataAdapter.SelectCommand = new SQLiteCommand("SELECT        Sold.*FROM      Sold", myConnection);
-      myDataAdapter.Fill(_myDataSet, "Sold");
+      myDataAdapter.Fill(_myDataSet, TableNames.Sold);
 
       myDataAdapter.SelectCommand = new SQLiteCommand("SELECT        ToSell.*FROM      ToSell", myConnection);
       myDataAdapter.Fill(_myDataSet, "ToSell");

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LicenseGenerator.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -46,7 +47,7 @@ namespace LicenseGenerator
            {"SalePrice","Цена"              },
            {"ПокупкаТелефона","Rec"               },
            {"Ценник","ToSell"            },
-           {"ПродажаТелефона","Sold"              },
+           {"ПродажаТелефона",TableNames.Sold              },
            {"ReasonOfBack","Причина возврата"}
 
             

@@ -193,6 +193,12 @@
     <Compile Include="UserForms\SellPhone.Designer.cs">
       <DependentUpon>SellPhone.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserForms\SessionHistory.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\SessionHistory.Designer.cs">
+      <DependentUpon>SessionHistory.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserForms\ToSell.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -248,6 +254,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserForms\SellPhone.resx">
       <DependentUpon>SellPhone.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserForms\SessionHistory.resx">
+      <DependentUpon>SessionHistory.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserForms\ToSell.resx">
       <DependentUpon>ToSell.cs</DependentUpon>

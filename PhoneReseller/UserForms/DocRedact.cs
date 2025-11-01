@@ -1,10 +1,11 @@
-﻿using System;
+﻿using LicenseGenerator.Data;
+using PhoneReseller.Data;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using System.Text.RegularExpressions;
-using PhoneReseller.Data;
+using System.Windows.Forms;
 
 namespace LicenseGenerator.UserForms
 {
@@ -44,7 +45,7 @@ namespace LicenseGenerator.UserForms
            {"Цена"              ,"SalePrice"},
            {"Rec"               ,"ПокупкаТелефона"},
            {"ToSell"            ,"Ценник"},
-           {"Sold"              ,"ПродажаТелефона"}
+           {TableNames.Sold              ,"ПродажаТелефона"}
 
             
         };

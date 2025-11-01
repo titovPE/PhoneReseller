@@ -1,8 +1,9 @@
-﻿using System;
+﻿using LicenseGenerator;
+using LicenseGenerator.Data;
+using System;
+using System.Data;
 using System.Linq;
 using System.Windows.Forms;
-using System.Data;
-using LicenseGenerator;
 
 namespace PhoneReseller.Data
 {
@@ -173,7 +174,7 @@ namespace PhoneReseller.Data
         {
             var result = entity.CloneTyped();
             if (entity.RoollBacked)
-                result.TableName = entity.TableName == "Rec" ? "ToSell" : "Sold";
+                result.TableName = entity.TableName == "Rec" ? "ToSell" : TableNames.Sold;
             if (result.IsRow) return result;
             if (result.ContainsKey("Rollbacked"))
             {

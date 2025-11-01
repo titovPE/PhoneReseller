@@ -150,7 +150,7 @@ namespace LicenseGenerator.Data
             var alterCommand = $"ALTER TABLE {TableNames.Vars} ADD COLUMN {newColumnName} BIT NOT NULL DEFAULT 1";
             new SQLiteCommand(alterCommand, _myConnection).ExecuteNonQuery();
 
-            new List<string>() { "Rec", "ToSell", "Sold" }.ForEach(tableName =>
+            new List<string>() { "Rec", "ToSell", TableNames.Sold }.ForEach(tableName =>
             {
                 var indexCommand = $"CREATE INDEX idx_{tableName}_PasportSer_PasportNum ON {tableName} (PasportSer, PasportNum)";
                 new SQLiteCommand(indexCommand, _myConnection).ExecuteNonQuery();
@@ -190,7 +190,7 @@ namespace LicenseGenerator.Data
                 $"AND (PasportNum = {pasportNumber} OR PasportNum = 1{pasportNumber})";
             var result = new List<DataRow>();
 
-            new List<string>() { "Rec", "ToSell", "Sold" }.ForEach(tableName =>
+            new List<string>() { "Rec", "ToSell", TableNames.Sold }.ForEach(tableName =>
             {
                 var command = $"SELECT * FROM {tableName} {condition}";
                 var rows = getRowsByCommand(command);
@@ -222,7 +222,7 @@ namespace LicenseGenerator.Data
                 FillToSell(whereList);
                 return;
             }
-            if (tableName == "Sold") whereList.Add("(RollBacked = 0) OR (RollBacked IS NULL)");
+            if (tableName == TableNames.Sold) whereList.Add("(RollBacked = 0) OR (RollBacked IS NULL)");
             var where = WherelistTostring(whereList);
             Select(tableName, where);
         }
@@ -498,8 +498,8 @@ namespace LicenseGenerator.Data
 
         public static void VerifyDatabase()
         {
-            VerifyColumn("Sold", "Rollbacked", "bit");
-            VerifyColumn("Sold", "ReasonOfBack", "varchar(256)");
+            VerifyColumn(TableNames.Sold, "Rollbacked", "bit");
+            VerifyColumn(TableNames.Sold, "ReasonOfBack", "varchar(256)");
         }
 
         private static void VerifyColumn(string tableName, string columnName, string columnType)

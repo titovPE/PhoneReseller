@@ -14,5 +14,7 @@ namespace LicenseGenerator.Data
         public static string Actions = "Actions";
         //* Таблица истории Сверок */
         public static string Sessions = "Sessions";
+        //* Таблица для проданных телефонов */
+        public const string Sold = "Sold";
     }
 }

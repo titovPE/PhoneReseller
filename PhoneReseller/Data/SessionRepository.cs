@@ -42,7 +42,7 @@ namespace PhoneReseller.Data
                             );
                             CREATE INDEX [Sessions_date_index] ON [{sessionsTable}] ([Date] ASC);";
             DataProvider.ExecuteNonQuery(command);
-            MessageBox.Show(SessionEnabledInfo);
+            MessageBox.Show(SessionMessages.SessionEnabledInfo);
         }
     }
 }

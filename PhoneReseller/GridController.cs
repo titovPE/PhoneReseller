@@ -102,7 +102,7 @@ namespace LicenseGenerator
         {
             {"Rec",_recColumns},
             {"ToSell",_toSellColumns},
-            {"Sold",_soldColumns},
+            {TableNames.Sold,_soldColumns},
             {"Workers",_workersColumns},
             {TableNames.Clients,_clientsColumns}
         };
