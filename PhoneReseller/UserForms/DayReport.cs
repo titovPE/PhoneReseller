@@ -26,6 +26,7 @@ namespace LicenseGenerator.UserForms
             LoaadSoldPhones();
         }
 
+        //Вариант отображение отчета для внутредневной сверки
         public void ShowReducedDialog()
         {
             dateTimePicker1.Enabled = false;

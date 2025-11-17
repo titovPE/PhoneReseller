@@ -476,24 +476,15 @@ namespace LicenseGenerator.Data
         /// <param name="newPrice"></param>
         public static void UpdateSalePrice(ColumnsDictionary row, double newPrice)
         {
-            var newRow = SQLiteDataConverter.DictionaryToSQLiteFormat(row);
+            //Рачет нового значения поля наценки
+            double workCost = (row.ContainsKey("WorkCost"))?SQLiteDataConverter.ToDouble(row["WorkCost"]):0;
+            var margin = newPrice - (SQLiteDataConverter.ToDouble(row["Cost"]) + workCost);
 
+            var newRow = SQLiteDataConverter.DictionaryToSQLiteFormat(row);
             newRow["SalePrice"] = newPrice.ToString();
+            newRow["Margin"] = margin.ToString();
             UpdateRow(newRow);
             GetTable(row.TableName);
-            //double workCost = 0;
-            //if (row.ContainsKey("WorkCost")) workCost = SQLiteDataConverter.ToDouble(row["WorkCost"]);
-            //var margin = newPrice - (SQLiteDataConverter.ToDouble(row["Cost"]) + workCost);
-
-            //var sMargin = SQLiteDataConverter.ToNumString(margin.ToString());
-            //var sPrice = SQLiteDataConverter.ToNumString(newPrice.ToString());
-            //var command = "UPDATE       " + row.TableName + " SET SalePrice = " + sPrice + " ,Margin = " + sMargin +
-            //                 " WHERE  (ID = " + row["ID"] + ")";
-            //new SQLiteCommand(command, _myConnection).ExecuteNonQuery();
-            //_myDataSet.Tables[row.TableName].Clear();
-            //_myDataAdapter.SelectCommand =
-            //    new SQLiteCommand("SELECT        " + row.TableName + ".* FROM      " + row.TableName + "", _myConnection);
-            //_myDataAdapter.Fill(_myDataSet, row.TableName);
         }
 
         public static void VerifyDatabase()

@@ -18,7 +18,7 @@ namespace LicenseGenerator
 {
     public partial class Form1 : Form
     {
-        private const string version = "13.1.1";
+        private const string version = "13.2.0";
 
         private const string Key =
             "<RSAKeyValue>" + "<Modulus>" +
@@ -367,6 +367,7 @@ namespace LicenseGenerator
             DataProvider.UpdateSalePrice(phone, Convert.ToDouble(NewPrice.Text));
             dataGridView1.CurrentCell = dataGridView1["IMEI", index];
             MessageBox.Show("Цена изменена", "!");
+            NewPrice.Text = "";
         }
 
 

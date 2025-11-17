@@ -28,7 +28,7 @@ namespace PhoneReseller.UserForms
 
         public static void Transaction(string dialogName, ColumnsDictionary entity)
         {
-              ActionTypeWithComment getActionName(string tabelName)
+            ActionTypeWithComment getActionInfo(string tabelName)
             {
                 switch (tabelName)
                 {
@@ -56,7 +56,7 @@ namespace PhoneReseller.UserForms
             var phone = DialogProvider.GetForm(dialogName).ShowMe(entity);
             if (phone == null) return;
             var price = phone.ContainsKey("Price") ? phone["Price"] : "0";
-            var parsedPrice  = decimal.Parse(price);
+            var parsedPrice = decimal.Parse(price);
             //Особенная логика для телефонов, которые были откачены
             if (entity.ContainsKey("Rollbacked") && bool.Parse(entity["Rollbacked"]))
             {
@@ -65,15 +65,17 @@ namespace PhoneReseller.UserForms
                 var prevTable = phone.TableName;
                 phone.TableName = prevTable == "Rec" ? "ToSell" : TableNames.Sold;
                 DataProvider.UpdateRow(phone);
-                var localAction = getActionName(phone.TableName);
-                ActionsRepository.AddActionLog(phone["ID"], $"Откаченый телефон переведен {localAction.Comment}", phone["Worker"],localAction.Value, parsedPrice);
+                var localAction = getActionInfo(phone.TableName);
+                ActionsRepository.AddActionLog(phone["ID"], $"Откаченый телефон переведен {localAction.Comment}", phone["Worker"], localAction.Value, parsedPrice);
                 DataProvider.GetTable(prevTable);
             }
             else DataProvider.MooveRow(phone, dialogName);
-            var action = getActionName(dialogName);
+            var action = getActionInfo(dialogName);
             ActionsRepository.AddActionLog(phone["ID"], $"Телефон переведен {action.Comment}", phone["Worker"], action.Value, parsedPrice);
             phone.TableName = dialogName;
-            new DocPrinter(phone);
+            //Печать ценника пока отулючена. Нужно сделать печать пачкой из списка
+            if (action.Value != ActionType.setAsForSale)
+                new DocPrinter(phone);
         }
 
         public static void EditPhone(string dialogName, ColumnsDictionary entity)
