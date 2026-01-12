@@ -17,7 +17,7 @@ namespace LicenseGenerator.Data
     {
         private static SQLiteConnection _myConnection;
         private static SQLiteDataAdapter _myDataAdapter;
-        private static DataSet1 _myDataSet;
+        private static PhoneReseller.DataSet1 _myDataSet;
 
         private static bool? isAutocompleteAvailable = null;
 
@@ -29,7 +29,7 @@ namespace LicenseGenerator.Data
             _myConnection = new SQLiteConnection("data source= " + path );
             _myDataAdapter = new SQLiteDataAdapter($"SELECT        {TableNames.Vars}.*FROM      {TableNames.Vars}",
                                                    _myConnection);
-            _myDataSet = new DataSet1();
+            _myDataSet = new PhoneReseller.DataSet1();
             _myConnection.Open();
             _myDataAdapter.Fill(_myDataSet, TableNames.Vars);
             //VerifyDatabase();

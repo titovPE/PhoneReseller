@@ -8,7 +8,7 @@ namespace LicenseGenerator.Data
 {
   class MergeDB
   {
-    static DataSet1 _myDataSet;
+    static PhoneReseller.DataSet1 _myDataSet;
 
     public MergeDB()
     {
@@ -23,7 +23,7 @@ namespace LicenseGenerator.Data
     {
       var myConnection = new SQLiteConnection("data source= " + dataPath);
       myConnection.Open();
-      _myDataSet = new DataSet1();
+      _myDataSet = new PhoneReseller.DataSet1();
       var myDataAdapter = new SQLiteDataAdapter($"SELECT        {TableNames.Vars}.*FROM      {TableNames.Vars}", myConnection);
       myDataAdapter.Fill(_myDataSet, TableNames.Vars);
 
