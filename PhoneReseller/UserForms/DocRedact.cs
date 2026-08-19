@@ -99,6 +99,10 @@ namespace LicenseGenerator.UserForms
 
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
+            System.IO.File.AppendAllText(
+                System.IO.Path.Combine(Application.StartupPath, "printpage_debug.log"),
+                DateTime.Now.ToString("O") + " PrintPage called, graphics=" + e.Graphics.GetHashCode() + ", HasMorePages(before)=" + e.HasMorePages + Environment.NewLine);
+
             var graphics = e.Graphics;
             RectangleF rectFull;
 
@@ -155,6 +159,29 @@ namespace LicenseGenerator.UserForms
         }
 
 
+        /// <summary>
+        /// Печатает содержимое RichTextBox (<see cref="_rich"/>) на переданной поверхности Graphics
+        /// внутри области <paramref name="textArea"/>, воспроизводя форматирование (шрифт, начертание,
+        /// выравнивание абзацев) с переносом слов по ширине области.
+        /// Нужен потому, что стандартный <see cref="RichTextBox"/> не умеет печататься сам —
+        /// метод вручную "перерисовывает" текст средствами GDI+ (Graphics.DrawString) для события
+        /// PrintPage, посимвольно проходя по тексту и сравнивая шрифт каждого символа с предыдущим
+        /// (Rtf не даёт прямого доступа к списку форматированных фрагментов), чтобы выделить участки
+        /// с одинаковым форматированием ("прогоны").
+        /// Алгоритм:
+        /// 1. Инициализирует состояние печати (текущая позиция строки/страницы, область печати).
+        /// 2. Идёт по тексту RichTextBox и для каждого символа сравнивает его шрифт с шрифтом
+        ///    начала текущего прогона (EqualFont); при смене шрифта или переносе строки ('\n')
+        ///    накопленный фрагмент передаётся в <see cref="Puts"/>.
+        /// 3. На каждом переводе строки начинается новая строка (<see cref="StartNewLine"/>) с
+        ///    выравниванием абзаца, взятым из RichTextBox (<see cref="AligmentConvert"/>).
+        /// 4. В конце оставшийся текст также передаётся в Puts, и вызывается <see cref="EndLine"/>
+        ///    для отрисовки последней строки.
+        /// </summary>
+        /// <param name="textArea">Прямоугольная область на странице, в которую печатается текст
+        /// (обычно область печати за вычетом полей, см. printDocument1_PrintPage).</param>
+        /// <param name="currentGraphics">Поверхность Graphics текущей печатаемой страницы
+        /// (e.Graphics из PrintPageEventArgs), на которой непосредственно рисуется текст.</param>
         public void FillGraphics(RectangleF textArea, Graphics currentGraphics)
         {
             _lineText = new List<TextElement>();
@@ -162,38 +189,40 @@ namespace LicenseGenerator.UserForms
             _currentGraphics = currentGraphics;
             _currentPosition = _textArea.Left;
             _currentLine = _textArea.Top;
+            var text = _rich.Text;
+            if (text.Length == 0) return;
             var stringFormat = new StringFormat {Trimming = StringTrimming.Word};
             var start = 0;
-            var length = 1;
-            _rich.Select(start, length);
-            var etalon = _rich.SelectionFont;
+            _rich.Select(0, 1);
+            var currentFont = _rich.SelectionFont;
             stringFormat.Alignment = AligmentConvert(_rich.SelectionAlignment);
             StartLine(stringFormat);
-            for (; start + length < _rich.Text.Length; length++)
+            for (var pos = 0; pos < text.Length; pos++)
             {
-                _rich.Select(start, length);
-                if (_rich.Text[start + length - 1] == '\n')
+                if (text[pos] == '\n')
                 {
-                    Puts(_rich.SelectedText, etalon);
-                    start += length;
-                    length = 0;
-                    _rich.Select(start, length + 1);
-                    etalon = _rich.SelectionFont;
-                    var format = new StringFormat(stringFormat)
-                                              {Alignment = AligmentConvert(_rich.SelectionAlignment)};
-                    StartNewLine(format);
+                    Puts(text.Substring(start, pos - start + 1), currentFont);
+                    start = pos + 1;
+                    if (start < text.Length)
+                    {
+                        _rich.Select(start, 1);
+                        currentFont = _rich.SelectionFont;
+                        var format = new StringFormat(stringFormat)
+                                                  {Alignment = AligmentConvert(_rich.SelectionAlignment)};
+                        StartNewLine(format);
+                    }
                     continue;
                 }
-                if (EqualFont(_rich.SelectionFont, etalon)) continue;
-                _rich.Select(start, length - 1);
-                Puts(_rich.SelectedText, etalon);
-                start += length - 1;
-                length = 1;
-                _rich.Select(start, length);
-                etalon = _rich.SelectionFont;
+                var isBoundary = text[pos] == ' ' || text[pos] == '\t';
+                var afterBoundary = pos > 0 && (text[pos - 1] == ' ' || text[pos - 1] == '\t');
+                if (pos > start && !isBoundary && !afterBoundary) continue;
+                _rich.Select(pos, 1);
+                if (EqualFont(_rich.SelectionFont, currentFont)) continue;
+                Puts(text.Substring(start, pos - start), currentFont);
+                start = pos;
+                currentFont = _rich.SelectionFont;
             }
-            _rich.Select(start, length + 1);
-            Puts(_rich.SelectedText, _rich.SelectionFont);
+            if (start < text.Length) Puts(text.Substring(start), currentFont);
             EndLine();
         }
 
@@ -209,11 +238,17 @@ namespace LicenseGenerator.UserForms
         }
         public void Puts(string text, Font textFont)
         {
+            if (textFont == null) textFont = _rich.Font;
             if (_lineHeight < textFont.Height) _lineHeight = textFont.Height;
             var lineSize = new SizeF(_textArea.Left + _textArea.Width - _currentPosition, textFont.Height);
             int charCount;
             int strCount;
             var width = _currentGraphics.MeasureString(text, textFont, lineSize, _lineFormat, out charCount, out strCount).Width;
+            System.IO.File.AppendAllText(
+                System.IO.Path.Combine(Application.StartupPath, "puts_debug.log"),
+                string.Format("Puts text='{0}' font={1} {2} lineSize=({3:0.##},{4:0.##}) currentPosBefore={5:0.##} charCount={6} width={7:0.##}\r\n",
+                    text.Replace("\r", "\\r").Replace("\n", "\\n"), textFont.Name, textFont.Size,
+                    lineSize.Width, lineSize.Height, _currentPosition, charCount, width));
             _currentPosition += width;
             var str = text.Substring(0, charCount);
             _lineText.Add(new TextElement(str, textFont, width));
@@ -287,7 +322,7 @@ namespace LicenseGenerator.UserForms
 
         public bool EqualFont(Font f1, Font f2)
         {
-            if (f1 == null) return false;
+            if (f1 == null || f2 == null) return false;
             return (Math.Abs(f1.Size - f2.Size) < 0.001) && (f1.Name == f2.Name);
         }
     }
