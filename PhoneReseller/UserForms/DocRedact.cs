@@ -99,10 +99,6 @@ namespace LicenseGenerator.UserForms
 
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
-            System.IO.File.AppendAllText(
-                System.IO.Path.Combine(Application.StartupPath, "printpage_debug.log"),
-                DateTime.Now.ToString("O") + " PrintPage called, graphics=" + e.Graphics.GetHashCode() + ", HasMorePages(before)=" + e.HasMorePages + Environment.NewLine);
-
             var graphics = e.Graphics;
             RectangleF rectFull;
 
@@ -170,12 +166,16 @@ namespace LicenseGenerator.UserForms
         /// с одинаковым форматированием ("прогоны").
         /// Алгоритм:
         /// 1. Инициализирует состояние печати (текущая позиция строки/страницы, область печати).
-        /// 2. Идёт по тексту RichTextBox и для каждого символа сравнивает его шрифт с шрифтом
-        ///    начала текущего прогона (EqualFont); при смене шрифта или переносе строки ('\n')
-        ///    накопленный фрагмент передаётся в <see cref="Puts"/>.
-        /// 3. На каждом переводе строки начинается новая строка (<see cref="StartNewLine"/>) с
+        /// 2. Идёт по тексту RichTextBox и на границах слов (пробел/таб/начало прогона) сравнивает
+        ///    шрифт с шрифтом начала текущего прогона (<see cref="EqualFont"/>); внутри слова шрифт
+        ///    не перепроверяется — считается таким же, как у первой буквы слова. Это осознанное
+        ///    упрощение: при частых одиночных Select() на середине слова RichTextBox начинает
+        ///    отдавать недостоверный шрифт отдельных символов (проверено эмпирически на реальных
+        ///    документах), а смена шрифта внутри слова в шаблонах не встречается.
+        /// 3. При смене шрифта или переносе строки ('\n') накопленный фрагмент передаётся в <see cref="Puts"/>.
+        /// 4. На каждом переводе строки начинается новая строка (<see cref="StartNewLine"/>) с
         ///    выравниванием абзаца, взятым из RichTextBox (<see cref="AligmentConvert"/>).
-        /// 4. В конце оставшийся текст также передаётся в Puts, и вызывается <see cref="EndLine"/>
+        /// 5. В конце оставшийся текст также передаётся в Puts, и вызывается <see cref="EndLine"/>
         ///    для отрисовки последней строки.
         /// </summary>
         /// <param name="textArea">Прямоугольная область на странице, в которую печатается текст
@@ -184,19 +184,19 @@ namespace LicenseGenerator.UserForms
         /// (e.Graphics из PrintPageEventArgs), на которой непосредственно рисуется текст.</param>
         public void FillGraphics(RectangleF textArea, Graphics currentGraphics)
         {
-            _lineText = new List<TextElement>();
-            _textArea = textArea;
-            _currentGraphics = currentGraphics;
-            _currentPosition = _textArea.Left;
-            _currentLine = _textArea.Top;
+            BeginPrint(textArea, currentGraphics);
             var text = _rich.Text;
             if (text.Length == 0) return;
-            var stringFormat = new StringFormat {Trimming = StringTrimming.Word};
+
             var start = 0;
-            _rich.Select(0, 1);
-            var currentFont = _rich.SelectionFont;
-            stringFormat.Alignment = AligmentConvert(_rich.SelectionAlignment);
+            var currentFont = SelectCharFont(0);
+            var stringFormat = new StringFormat
+            {
+                Trimming = StringTrimming.Word,
+                Alignment = AligmentConvert(_rich.SelectionAlignment)
+            };
             StartLine(stringFormat);
+
             for (var pos = 0; pos < text.Length; pos++)
             {
                 if (text[pos] == '\n')
@@ -205,25 +205,77 @@ namespace LicenseGenerator.UserForms
                     start = pos + 1;
                     if (start < text.Length)
                     {
-                        _rich.Select(start, 1);
-                        currentFont = _rich.SelectionFont;
-                        var format = new StringFormat(stringFormat)
-                                                  {Alignment = AligmentConvert(_rich.SelectionAlignment)};
-                        StartNewLine(format);
+                        currentFont = SelectCharFont(start);
+                        StartNewLine(CloneFormatWithCurrentAlignment(stringFormat));
                     }
                     continue;
                 }
-                var isBoundary = text[pos] == ' ' || text[pos] == '\t';
-                var afterBoundary = pos > 0 && (text[pos - 1] == ' ' || text[pos - 1] == '\t');
-                if (pos > start && !isBoundary && !afterBoundary) continue;
-                _rich.Select(pos, 1);
-                if (EqualFont(_rich.SelectionFont, currentFont)) continue;
+
+                if (!IsFontCheckPoint(text, pos, start)) continue;
+
+                var font = SelectCharFont(pos);
+                if (EqualFont(font, currentFont)) continue;
+
                 Puts(text.Substring(start, pos - start), currentFont);
                 start = pos;
-                currentFont = _rich.SelectionFont;
+                currentFont = font;
             }
+
             if (start < text.Length) Puts(text.Substring(start), currentFont);
             EndLine();
+        }
+
+        /// <summary>
+        /// Сбрасывает состояние печати (накопленную строку, текущую позицию/строку и область/поверхность
+        /// вывода) перед началом обхода нового документа в <see cref="FillGraphics"/>.
+        /// </summary>
+        private void BeginPrint(RectangleF textArea, Graphics currentGraphics)
+        {
+            _lineText = new List<TextElement>();
+            _textArea = textArea;
+            _currentGraphics = currentGraphics;
+            _currentPosition = _textArea.Left;
+            _currentLine = _textArea.Top;
+        }
+
+        /// <summary>
+        /// Выделяет в <see cref="_rich"/> ровно один символ по позиции <paramref name="pos"/> и
+        /// возвращает его шрифт. Единственное место в классе, где читается шрифт из RichTextBox —
+        /// намеренно всегда выделяется один символ (а не растущий диапазон), поскольку на растущих/
+        /// повторных выделениях RichTextBox отдаёт нестабильный (иногда неверный) шрифт.
+        /// </summary>
+        private Font SelectCharFont(int pos)
+        {
+            _rich.Select(pos, 1);
+            return _rich.SelectionFont;
+        }
+
+        /// <summary>
+        /// Определяет, нужно ли на позиции <paramref name="pos"/> перечитывать шрифт из RichTextBox.
+        /// Шрифт проверяется только в начале текущего прогона, на пробеле/табе и сразу после него —
+        /// то есть на границах слов; внутри слова шрифт считается неизменным (см. примечание в
+        /// <see cref="FillGraphics"/> про недостоверность RichTextBox на частых одиночных Select()).
+        /// </summary>
+        private static bool IsFontCheckPoint(string text, int pos, int start)
+        {
+            if (pos == start) return true;
+            if (IsWordBoundary(text[pos])) return true;
+            return pos > 0 && IsWordBoundary(text[pos - 1]);
+        }
+
+        private static bool IsWordBoundary(char c)
+        {
+            return c == ' ' || c == '\t';
+        }
+
+        /// <summary>
+        /// Копирует <paramref name="baseFormat"/>, подставляя выравнивание абзаца из текущего
+        /// выделения в <see cref="_rich"/> (устанавливается непосредственно перед вызовом, см.
+        /// <see cref="SelectCharFont"/> в месте вызова).
+        /// </summary>
+        private StringFormat CloneFormatWithCurrentAlignment(StringFormat baseFormat)
+        {
+            return new StringFormat(baseFormat) {Alignment = AligmentConvert(_rich.SelectionAlignment)};
         }
 
 
@@ -244,11 +296,6 @@ namespace LicenseGenerator.UserForms
             int charCount;
             int strCount;
             var width = _currentGraphics.MeasureString(text, textFont, lineSize, _lineFormat, out charCount, out strCount).Width;
-            System.IO.File.AppendAllText(
-                System.IO.Path.Combine(Application.StartupPath, "puts_debug.log"),
-                string.Format("Puts text='{0}' font={1} {2} lineSize=({3:0.##},{4:0.##}) currentPosBefore={5:0.##} charCount={6} width={7:0.##}\r\n",
-                    text.Replace("\r", "\\r").Replace("\n", "\\n"), textFont.Name, textFont.Size,
-                    lineSize.Width, lineSize.Height, _currentPosition, charCount, width));
             _currentPosition += width;
             var str = text.Substring(0, charCount);
             _lineText.Add(new TextElement(str, textFont, width));
