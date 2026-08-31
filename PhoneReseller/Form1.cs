@@ -18,7 +18,7 @@ namespace LicenseGenerator
 {
     public partial class Form1 : Form
     {
-        private const string version = "14.0.1";
+        private const string version = "14.0.2";
 
         private const string Key =
             "<RSAKeyValue>" + "<Modulus>" +
@@ -242,6 +242,11 @@ namespace LicenseGenerator
             RecNotes.Text = dictionary.getOrNull("Notes") ?? "";
         }
 
+        /// <summary>
+        /// Печатает договор покупки для телефона, выбранного в таблице купленных (dataGridView0).
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void printPurchaseContract(object sender, EventArgs e)
         {
             var row = GetSelectedRow(dataGridView0);
@@ -516,11 +521,16 @@ namespace LicenseGenerator
 
         #endregion
 
+        /// <summary>
+        /// Печатает документ (ценник) для телефона, выбранного в таблице "На продажу" (dataGridView1).
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button6_Click(object sender, EventArgs e)
         {
             var row = GetSelectedRow(dataGridView1);
             if (row == null) return;
-            new DocPrinter(SQLiteDataConverter.RowToDictionary(row));
+            new DocPrinter(new[] { SQLiteDataConverter.RowToDictionary(row) });
         }
 
         private void DeleteWorker(object sender, EventArgs e)

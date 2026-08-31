@@ -14,6 +14,14 @@ namespace PhoneReseller.UserForms
 {
   class DialogService
   {
+        /// <summary>
+        /// Открывает диалог создания записи о телефоне (покупка/не выкуплен), сохраняет её в БД
+        /// и логирует действие. Если <paramref name="printDoc"/> равен true, печатает документ
+        /// (договор покупки) для созданной записи.
+        /// </summary>
+        /// <param name="dialogName">Имя диалога/таблицы, для которой создаётся запись (например, "Rec", "NotBuy").</param>
+        /// <param name="entity">Предзаполненные данные для диалога (владелец и т.п.), может быть null.</param>
+        /// <param name="printDoc">Печатать ли документ после создания записи.</param>
         public static void CreatePhone(string dialogName, ColumnsDictionary entity, bool printDoc)
         {
             var phone = DialogProvider.GetForm(dialogName).ShowMe(entity);
@@ -26,6 +34,13 @@ namespace PhoneReseller.UserForms
                 new DocPrinter(phone);
         }
 
+        /// <summary>
+        /// Переводит телефон между таблицами (например, из купленных на продажу или в проданные),
+        /// обновляет запись в БД и логирует действие. Печатает документ по завершении перевода,
+        /// кроме случая перевода на продажу (setAsForSale), для которого печать ценника отключена.
+        /// </summary>
+        /// <param name="dialogName">Имя диалога/целевой таблицы перевода (например, "ToSell", "Sold").</param>
+        /// <param name="entity">Данные телефона, передаваемые в диалог.</param>
         public static void Transaction(string dialogName, ColumnsDictionary entity)
         {
             ActionTypeWithComment getActionInfo(string tabelName)

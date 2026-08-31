@@ -13,6 +13,14 @@ namespace LicenseGenerator.UserForms
     {
         readonly ColumnsDictionary _phoneInfo;
 
+        /// <summary>
+        /// Страницы документа для печати — по одному <see cref="RichTextBox"/> с заполненным
+        /// шаблоном на телефон. <see cref="printDocument1_PrintPage"/> печатает их по очереди,
+        /// каждую на отдельной физической странице.
+        /// </summary>
+        readonly List<RichTextBox> _printPages = new List<RichTextBox>();
+        int _printPageIndex;
+
         readonly Dictionary<string, string> _localization = new Dictionary<string, string> 
         {
            {"адрес"             ,"Addres"},
@@ -57,46 +65,120 @@ namespace LicenseGenerator.UserForms
 
         public DocPrinter(ColumnsDictionary phoneInfo)
         {
-            var path = Application.StartupPath;
             InitializeComponent();
-            var docName = _localization["Rec"];
-            if (_localization.ContainsKey(phoneInfo.TableName)) docName = _localization[phoneInfo.TableName];
-            TextBox1.LoadFile(path + "\\Docs\\" + docName + ".rtf");
+            TextBox1.LoadFile(GetTemplatePath(phoneInfo.TableName));
 
             _phoneInfo = phoneInfo;
             ReplaceLabels(Regex.Matches(TextBox1.Text, "#Label(\\w*)"));
-            if (printPreviewDialog1 != null)
-            {
-                printPreviewDialog1.ShowDialog();
-            }
+            _printPages.Add(TextBox1);
+            ShowPrintPreview();
         }
 
+        /// <summary>
+        /// Печатает несколько телефонов — по одному заполненному шаблону на телефон, каждый на
+        /// отдельной странице (см. <see cref="_printPages"/> и <see cref="printDocument1_PrintPage"/>).
+        /// Все переданные телефоны должны относиться к одной таблице (быть документами одного типа) —
+        /// при попытке передать телефоны из разных таблиц печать не выполняется, вместо этого
+        /// показывается предупреждение.
+        /// </summary>
+        /// <param name="phones">Телефоны для печати. Должны быть одного типа (одна таблица).</param>
+        public DocPrinter(IEnumerable<ColumnsDictionary> phones)
+        {
+            var phoneList = phones.ToList();
+            if (phoneList.Count == 0) return;
+            if (phoneList.Select(p => p.TableName).Distinct().Count() > 1)
+            {
+                MessageBox.Show(
+                    "Обнаружена попытка напечатать телефоны из разных документов. Так нельзя — все телефоны должны быть одного типа.",
+                    "Печать невозможна", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            InitializeComponent();
+
+            var templatePath = GetTemplatePath(phoneList[0].TableName);
+
+            foreach (var phone in phoneList)
+            {
+                var page = new RichTextBox();
+                page.LoadFile(templatePath);
+                ReplaceLabels(page, phone, Regex.Matches(page.Text, "#Label(\\w*)"));
+                _printPages.Add(page);
+            }
+
+            ShowPrintPreview();
+        }
+
+        private void ShowPrintPreview()
+        {
+            if (printPreviewDialog1 == null) return;
+            printDocument1.BeginPrint += (sender, e) => _printPageIndex = 0;
+            printPreviewDialog1.ShowDialog();
+        }
+
+        /// <summary>
+        /// Возвращает путь к rtf-шаблону документа, соответствующему таблице <paramref name="tableName"/>
+        /// (например, "Rec" -&gt; ПокупкаТелефона.rtf). Если для таблицы нет отдельного шаблона,
+        /// используется шаблон таблицы "Rec".
+        /// </summary>
+        private string GetTemplatePath(string tableName)
+        {
+            var docName = _localization.ContainsKey(tableName) ? _localization[tableName] : _localization["Rec"];
+            return Application.StartupPath + "\\Docs\\" + docName + ".rtf";
+        }
+
+        /// <summary>
+        /// Подставляет в <see cref="TextBox1"/> значения полей телефона <see cref="_phoneInfo"/>
+        /// вместо меток-плейсхолдеров (например, "#LabelФИО"), найденных в <paramref name="matches"/>.
+        /// </summary>
         public void ReplaceLabels(MatchCollection matches)
+        {
+            ReplaceLabels(TextBox1, _phoneInfo, matches);
+        }
+
+        /// <summary>
+        /// Подставляет в <paramref name="target"/> значения полей <paramref name="phoneInfo"/> вместо
+        /// меток-плейсхолдеров (например, "#LabelФИО"), найденных в <paramref name="matches"/>.
+        /// Каждая метка ("#Label" + русское имя поля) заменяется соответствующим значением из
+        /// <paramref name="phoneInfo"/> (по сопоставлению из <see cref="_localization"/>); если поля
+        /// нет в <paramref name="phoneInfo"/> — подставляется пустая строка, а поля-даты форматируются
+        /// через <see cref="SQLiteDataConverter.ToDate"/>. Проход идёт с конца, чтобы замена одной
+        /// метки не сдвигала индексы (<see cref="Match.Index"/>) ещё не обработанных совпадений.
+        /// </summary>
+        /// <param name="target">RichTextBox с загруженным шаблоном документа, в котором заменяются метки.</param>
+        /// <param name="phoneInfo">Данные телефона, значения которых подставляются вместо меток.</param>
+        /// <param name="matches">Найденные в тексте шаблона метки-плейсхолдеры (regex "#Label(\w*)").</param>
+        private void ReplaceLabels(RichTextBox target, ColumnsDictionary phoneInfo, MatchCollection matches)
         {
             for (int i = matches.Count - 1; i > -1; i--)
             {
                 var m = matches[i];
                 var g = m.Groups[1];
-                TextBox1.Select(m.Index, m.Length);
+                target.Select(m.Index, m.Length);
                 var replace = _localization[g.Value];
-                if (!_phoneInfo.ContainsKey(replace)) replace = "";
+                if (!phoneInfo.ContainsKey(replace)) replace = "";
                 else
                 {
                     if (replace.IndexOf("Date") > -1)
                     {
-                        var date = SQLiteDataConverter.ToDate(_phoneInfo[replace]);
+                        var date = SQLiteDataConverter.ToDate(phoneInfo[replace]);
                         replace = date.ToShortDateString();
                     }
                     else
-                        replace = _phoneInfo[replace];
+                        replace = phoneInfo[replace];
                 }
-                TextBox1.SelectedText = replace;
+                target.SelectedText = replace;
             }
 
         }
 
 
 
+        /// <summary>
+        /// Печатает одну страницу из <see cref="_printPages"/> (текущую по <see cref="_printPageIndex"/>)
+        /// и сообщает через <see cref="PrintPageEventArgs.HasMorePages"/>, остались ли ещё страницы —
+        /// так каждый телефон в пакетной печати попадает на свою отдельную физическую страницу.
+        /// </summary>
         private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
             var graphics = e.Graphics;
@@ -106,7 +188,7 @@ namespace LicenseGenerator.UserForms
             else
                 //Определяем   объект  rectanglefFull
                 rectFull = new RectangleF(
-                    //Устанавливаем координату  X  
+                    //Устанавливаем координату  X
                 e.MarginBounds.Left - (e.PageBounds.Width - graphics.VisibleClipBounds.Width) / 2,
                     //Устанавливаем координату  Y
                 e.MarginBounds.Top - (e.PageBounds.Height - graphics.VisibleClipBounds.Height) / 2,
@@ -115,8 +197,11 @@ namespace LicenseGenerator.UserForms
                     //Устанавливаем высоту области
                 e.MarginBounds.Height);
 
-            var printer = new RichPrinter(TextBox1);
+            var printer = new RichPrinter(_printPages[_printPageIndex]);
             printer.FillGraphics(rectFull, graphics);
+
+            _printPageIndex++;
+            e.HasMorePages = _printPageIndex < _printPages.Count;
         }
 
     }
