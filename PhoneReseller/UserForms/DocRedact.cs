@@ -11,6 +11,13 @@ namespace LicenseGenerator.UserForms
 {
     public partial class DocPrinter : Form
     {
+        /// <summary>
+        /// Метка-плейсхолдер в шаблоне: необязательный номер слота (телефона внутри группы,
+        /// начиная с 1 — "#Label1ФИО") и название поля ("ФИО" и т.п., ключ <see cref="_localization"/>).
+        /// Метка без номера ("#LabelФИО") равносильна номеру 1.
+        /// </summary>
+        private const string LabelPattern = @"#Label(?<idx>\d*)(?<field>\D\w*)";
+
         readonly ColumnsDictionary _phoneInfo;
 
         /// <summary>
@@ -69,20 +76,28 @@ namespace LicenseGenerator.UserForms
             TextBox1.LoadFile(GetTemplatePath(phoneInfo.TableName));
 
             _phoneInfo = phoneInfo;
-            ReplaceLabels(Regex.Matches(TextBox1.Text, "#Label(\\w*)"));
+            ReplaceLabels(Regex.Matches(TextBox1.Text, LabelPattern));
             _printPages.Add(TextBox1);
             ShowPrintPreview();
         }
 
         /// <summary>
-        /// Печатает несколько телефонов — по одному заполненному шаблону на телефон, каждый на
-        /// отдельной странице (см. <see cref="_printPages"/> и <see cref="printDocument1_PrintPage"/>).
-        /// Все переданные телефоны должны относиться к одной таблице (быть документами одного типа) —
-        /// при попытке передать телефоны из разных таблиц печать не выполняется, вместо этого
-        /// показывается предупреждение.
+        /// Печатает несколько телефонов. Все переданные телефоны должны относиться к одной таблице
+        /// (быть документами одного типа) — при попытке передать телефоны из разных таблиц печать
+        /// не выполняется, вместо этого показывается предупреждение.
+        /// Без <paramref name="specialDocument"/> работает как раньше: обычный шаблон таблицы
+        /// (<see cref="GetTemplatePath"/>), по одному телефону на страницу.
+        /// С <paramref name="specialDocument"/> телефоны группируются по
+        /// <see cref="SpecialDocument.PhoneCount"/> штук, и на каждую группу печатается одна страница
+        /// по шаблону <see cref="SpecialDocument.Path"/> с пронумерованными по слотам метками
+        /// ("#Label1ФИО", "#Label2ФИО", ...); недостающие в последней неполной группе слоты остаются
+        /// пустыми.
         /// </summary>
         /// <param name="phones">Телефоны для печати. Должны быть одного типа (одна таблица).</param>
-        public DocPrinter(IEnumerable<ColumnsDictionary> phones)
+        /// <param name="specialDocument">Необязательное описание особого шаблона на несколько
+        /// телефонов на странице. Если не передан, используется обычная печать по одному телефону
+        /// на страницу.</param>
+        public DocPrinter(IEnumerable<ColumnsDictionary> phones, SpecialDocument specialDocument = null)
         {
             var phoneList = phones.ToList();
             if (phoneList.Count == 0) return;
@@ -96,14 +111,27 @@ namespace LicenseGenerator.UserForms
 
             InitializeComponent();
 
-            var templatePath = GetTemplatePath(phoneList[0].TableName);
-
-            foreach (var phone in phoneList)
+            if (specialDocument == null)
             {
-                var page = new RichTextBox();
-                page.LoadFile(templatePath);
-                ReplaceLabels(page, phone, Regex.Matches(page.Text, "#Label(\\w*)"));
-                _printPages.Add(page);
+                var templatePath = GetTemplatePath(phoneList[0].TableName);
+                foreach (var phone in phoneList)
+                {
+                    var page = new RichTextBox();
+                    page.LoadFile(templatePath);
+                    ReplaceLabels(page, new List<ColumnsDictionary> { phone }, Regex.Matches(page.Text, LabelPattern));
+                    _printPages.Add(page);
+                }
+            }
+            else
+            {
+                for (var offset = 0; offset < phoneList.Count; offset += specialDocument.PhoneCount)
+                {
+                    var group = phoneList.Skip(offset).Take(specialDocument.PhoneCount).ToList();
+                    var page = new RichTextBox();
+                    page.LoadFile(specialDocument.Path);
+                    ReplaceLabels(page, group, Regex.Matches(page.Text, LabelPattern));
+                    _printPages.Add(page);
+                }
             }
 
             ShowPrintPreview();
@@ -133,39 +161,42 @@ namespace LicenseGenerator.UserForms
         /// </summary>
         public void ReplaceLabels(MatchCollection matches)
         {
-            ReplaceLabels(TextBox1, _phoneInfo, matches);
+            ReplaceLabels(TextBox1, new List<ColumnsDictionary> { _phoneInfo }, matches);
         }
 
         /// <summary>
-        /// Подставляет в <paramref name="target"/> значения полей <paramref name="phoneInfo"/> вместо
-        /// меток-плейсхолдеров (например, "#LabelФИО"), найденных в <paramref name="matches"/>.
-        /// Каждая метка ("#Label" + русское имя поля) заменяется соответствующим значением из
-        /// <paramref name="phoneInfo"/> (по сопоставлению из <see cref="_localization"/>); если поля
-        /// нет в <paramref name="phoneInfo"/> — подставляется пустая строка, а поля-даты форматируются
-        /// через <see cref="SQLiteDataConverter.ToDate"/>. Проход идёт с конца, чтобы замена одной
-        /// метки не сдвигала индексы (<see cref="Match.Index"/>) ещё не обработанных совпадений.
+        /// Подставляет в <paramref name="target"/> значения полей телефонов <paramref name="phones"/>
+        /// вместо меток-плейсхолдеров, найденных в <paramref name="matches"/> (см. <see cref="LabelPattern"/>).
+        /// Метка состоит из номера слота (телефона в группе, начиная с 1; без номера — слот 1) и
+        /// названия поля (например, "#Label2ФИО" — поле "ФИО" второго телефона в группе). Название
+        /// поля сопоставляется с ключом телефона через <see cref="_localization"/>; если для номера
+        /// слота не хватило телефонов в <paramref name="phones"/> или поля нет у телефона —
+        /// подставляется пустая строка, а поля-даты форматируются через <see cref="SQLiteDataConverter.ToDate"/>.
+        /// Проход идёт с конца, чтобы замена одной метки не сдвигала индексы (<see cref="Match.Index"/>)
+        /// ещё не обработанных совпадений.
         /// </summary>
         /// <param name="target">RichTextBox с загруженным шаблоном документа, в котором заменяются метки.</param>
-        /// <param name="phoneInfo">Данные телефона, значения которых подставляются вместо меток.</param>
-        /// <param name="matches">Найденные в тексте шаблона метки-плейсхолдеры (regex "#Label(\w*)").</param>
-        private void ReplaceLabels(RichTextBox target, ColumnsDictionary phoneInfo, MatchCollection matches)
+        /// <param name="phones">Телефоны, значения которых подставляются вместо меток — по позиции
+        /// в списке (индекс 0 — слот 1, индекс 1 — слот 2 и т.д.).</param>
+        /// <param name="matches">Найденные в тексте шаблона метки-плейсхолдеры (см. <see cref="LabelPattern"/>).</param>
+        private void ReplaceLabels(RichTextBox target, IReadOnlyList<ColumnsDictionary> phones, MatchCollection matches)
         {
             for (int i = matches.Count - 1; i > -1; i--)
             {
                 var m = matches[i];
-                var g = m.Groups[1];
+                var idx = m.Groups["idx"].Value;
+                var field = m.Groups["field"].Value;
+                var slot = idx.Length == 0 ? 0 : int.Parse(idx) - 1;
+                var phoneInfo = slot >= 0 && slot < phones.Count ? phones[slot] : null;
+
                 target.Select(m.Index, m.Length);
-                var replace = _localization[g.Value];
-                if (!phoneInfo.ContainsKey(replace)) replace = "";
-                else
+                var key = _localization[field];
+                var replace = "";
+                if (phoneInfo != null && phoneInfo.ContainsKey(key))
                 {
-                    if (replace.IndexOf("Date") > -1)
-                    {
-                        var date = SQLiteDataConverter.ToDate(phoneInfo[replace]);
-                        replace = date.ToShortDateString();
-                    }
-                    else
-                        replace = phoneInfo[replace];
+                    replace = key.IndexOf("Date") > -1
+                        ? SQLiteDataConverter.ToDate(phoneInfo[key]).ToShortDateString()
+                        : phoneInfo[key];
                 }
                 target.SelectedText = replace;
             }
@@ -206,6 +237,26 @@ namespace LicenseGenerator.UserForms
 
     }
 
+
+    /// <summary>
+    /// Описание особого шаблона документа, рассчитанного на печать сразу нескольких телефонов на
+    /// одной физической странице (например, лист с несколькими ценниками). Плейсхолдеры в таком
+    /// шаблоне нумеруются по слотам: "#Label1ФИО", "#Label2ФИО", ... — номер соответствует
+    /// порядковому номеру телефона в группе, начиная с 1 (см. <see cref="DocPrinter.LabelPattern"/>).
+    /// </summary>
+    public class SpecialDocument
+    {
+        public string Path { get; }
+        public int PhoneCount { get; }
+
+        public SpecialDocument(string path, int phoneCount)
+        {
+            if (phoneCount < 1)
+                throw new ArgumentOutOfRangeException(nameof(phoneCount), "Количество телефонов в документе должно быть больше нуля.");
+            Path = path;
+            PhoneCount = phoneCount;
+        }
+    }
 
     public class RichPrinter
     {
