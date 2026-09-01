@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -213,6 +214,21 @@ namespace LicenseGenerator
             if (grid.SelectedRows[0].Index < 0) return null;
             var current = grid.BindingContext[grid.DataSource].Current;
             return ((DataRowView)current).Row;
+        }
+
+        /// <summary>
+        /// Получить все выделенные строки таблицы (для грида с мультивыбором).
+        /// </summary>
+        /// <param name="grid">таблица</param>
+        /// <returns></returns>
+        private List<DataRow> GetSelectedRows(DataGridView grid)
+        {
+            var rows = new List<DataRow>();
+            foreach (DataGridViewRow row in grid.SelectedRows)
+            {
+                if (row.DataBoundItem is DataRowView view) rows.Add(view.Row);
+            }
+            return rows;
         }
 
         /// <summary>
@@ -522,15 +538,17 @@ namespace LicenseGenerator
         #endregion
 
         /// <summary>
-        /// Печатает документ (ценник) для телефона, выбранного в таблице "На продажу" (dataGridView1).
+        /// Открывает выбор шаблона (<see cref="ReceiptSelect"/>) и печатает ценники для всех
+        /// телефонов, выделенных в таблице "На продажу" (dataGridView1, поддерживает мультивыбор).
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button6_Click(object sender, EventArgs e)
         {
-            var row = GetSelectedRow(dataGridView1);
-            if (row == null) return;
-            new DocPrinter(new[] { SQLiteDataConverter.RowToDictionary(row) });
+            var rows = GetSelectedRows(dataGridView1);
+            if (rows.Count == 0) return;
+            var phones = rows.ConvertAll(SQLiteDataConverter.RowToDictionary);
+            new ReceiptSelect(phones).ShowDialog();
         }
 
         private void DeleteWorker(object sender, EventArgs e)

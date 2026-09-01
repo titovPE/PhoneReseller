@@ -200,6 +200,12 @@
     <Compile Include="UserForms\PriceUp.Designer.cs">
       <DependentUpon>PriceUp.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserForms\ReceiptSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UserForms\ReceiptSelect.Designer.cs">
+      <DependentUpon>ReceiptSelect.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserForms\RegularClient.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -315,6 +321,10 @@
     <Content Include="2.ico" />
     <Content Include="Config.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\Docs\**\*.*">
+      <Link>Docs\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>
